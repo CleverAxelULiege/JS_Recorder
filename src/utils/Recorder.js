@@ -1,5 +1,8 @@
 import "./typedefs.js";
+/**Gap entre les boutons de la preview video */
 const GAP = 5;
+
+/**temps en milliseconde */
 const TIME_SLICE_MEDIA_RECORDER = 1000;
 
 /**@type {MediaTrackConstraintSet} */
@@ -61,6 +64,9 @@ export class Recorder {
     /**@private */
     isPaused = false;
 
+    /**@private */
+    isFullscreen = false;
+
     /**
      * @private
      * @type {ITraductionRecorder}
@@ -87,8 +93,10 @@ export class Recorder {
             TOGGLE_VIDEO_DEVICE_BUTTON: document.querySelector("#toggle_video_device_button"),
             PREVIEW_VIDEO: document.querySelector("#preview_video"),
             RECORDED_VIDEO: null,
-            TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".time_elapsed")
-        }
+            TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".time_elapsed"),
+            REQUEST_FULL_SCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
+            PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".video_container")
+        };
     }
 
     /**
@@ -109,6 +117,7 @@ export class Recorder {
             this.mediaStreamConstraint.video.deviceId = videoDeviceId;
         } else {
             this.element.TOGGLE_VIDEO_DEVICE_BUTTON.disabled = true;
+            //pas de périphérique vidéo donc je désactive le bouton
         }
 
 
@@ -131,7 +140,20 @@ export class Recorder {
         this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeVideo.bind(this));
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", this.stopRecording.bind(this));
 
+        this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
+
         return this;
+    }
+
+    /**@private */
+    toggleFullScreen() {
+        if (this.isFullscreen) {
+            document.exitFullscreen();
+        } else {
+            this.element.PREVIEW_VIDEO_CONTAINER_DIV.requestFullscreen();
+        }
+
+        this.isFullscreen = !this.isFullscreen;
     }
 
     /**
@@ -190,6 +212,11 @@ export class Recorder {
                 await this.stopRecording();
                 return;
             }
+        }
+
+        if (this.isFullscreen) {
+            document.exitFullscreen();
+            this.isFullscreen = false;
         }
 
         this.element.RECORDER_CONTAINER_DIV.classList.add("hidden");

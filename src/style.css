@@ -256,7 +256,8 @@ main h2 {
 .recorder_rec_button,
 .recorder_toggle_video_button,
 .recorder_stop_rec_button,
-.recorder_pause_resume_rec_button {
+.recorder_pause_resume_rec_button,
+.recorder_request_fullscreen {
     position: relative;
     min-width: 50px;
     height: 50px;
@@ -344,7 +345,8 @@ main h2 {
 .recorder_rec_button:hover,
 .recorder_toggle_video_button:hover,
 .recorder_stop_rec_button:hover,
-.recorder_pause_resume_rec_button:hover {
+.recorder_pause_resume_rec_button:hover,
+.recorder_request_fullscreen:hover {
     background-color: transparent;
     color: white;
     fill: white;

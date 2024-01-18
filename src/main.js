@@ -36,6 +36,7 @@ async function init() {
         if(!mediaStreamConstraint.video){
             page.displayVideoDeviceUnavailable();
         }
+        
 
         recorder = new Recorder(page.traduction.recorder);
         recorder
@@ -43,7 +44,7 @@ async function init() {
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
-            // recorder.openRecorder();
+            recorder.openRecorder();
         });
 
     } catch (status) {

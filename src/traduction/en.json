@@ -13,7 +13,8 @@
                 "pause" : "Pause the recording",
                 "resume" : "Resume the recording",
                 "start" : "Start the recording",
-                "toggleVideoDevice" : "Enable/disable the camera"
+                "toggleVideoDevice" : "Enable/disable the camera",
+                "requestFullScreen" : "Enable/disable the fullscreen"
             }
         }
     },
