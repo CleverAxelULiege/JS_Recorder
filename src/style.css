@@ -160,6 +160,13 @@ main h2 {
 .device_container>div {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+}
+
+.device_container>div select{
+    width: 100%;
+    max-width: 350px;
+    min-width: 250px;
 }
 
 .device_container>div label {

@@ -43,7 +43,7 @@ async function init() {
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
-            recorder.openRecorder();
+            // recorder.openRecorder();
         });
 
     } catch (status) {
