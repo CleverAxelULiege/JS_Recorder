@@ -1,3 +1,4 @@
+import { IS_MOBILE } from "../main.js";
 import "./typedefs.js";
 /**Gap entre les boutons de la preview video */
 const GAP = 5;
@@ -141,8 +142,17 @@ export class Recorder {
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", this.stopRecording.bind(this));
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
-
+        window.addEventListener("orientationchange", this.requestFullScreenWhenLandscapeOnMobile.bind(this));
         return this;
+    }
+
+    requestFullScreenWhenLandscapeOnMobile(){
+        if(window.innerWidth > window.innerHeight){
+            this.isFullscreen = true;
+            this.element.PREVIEW_VIDEO_CONTAINER_DIV.requestFullscreen().then(() => {}).catch(() => {
+                alert("flûte");
+            });
+        }
     }
 
     /**@private */
