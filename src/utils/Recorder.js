@@ -1,5 +1,7 @@
 import "./typedefs.js";
 const GAP = 5;
+const TIME_SLICE_MEDIA_RECORDER = 1000;
+
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
     width: 1280, //854
@@ -272,10 +274,12 @@ export class Recorder {
 
         this.animateButtonsIn();
         this.startCounterTimeElapsed();
-
-        this.mediaRecorder = new MediaRecorder(this.mediaStream);
+        this.mediaRecorder = new MediaRecorder(this.mediaStream, {
+            mimeType: "video/webm",
+        });
+        //video/webm; codecs="vp8, vorbis"
         this.initEventListenersOnMediaRecorder();
-        this.mediaRecorder.start();
+        this.mediaRecorder.start(TIME_SLICE_MEDIA_RECORDER);
         console.info("started the recording");
     }
 
@@ -294,6 +298,7 @@ export class Recorder {
 
         this.mediaRecorder.onstop = () => {
             console.info("Stopped the recording");
+            console.log(this.recordedChunks);
             // let recordedBlob = new Blob(this.recordedChunks, { type: "video/webm" });
 
             // this.element.RECORDED_VIDEO.src = URL.createObjectURL(recordedBlob);

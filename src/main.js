@@ -3,16 +3,15 @@ import { Page } from "./utils/Page.js";
 import { Recorder } from "./utils/Recorder.js";
 import "./utils/typedefs.js"
 
-export const DOCUMENT_LANG = document.documentElement.lang;
-
 /**@type {MediaStreamConstraints} */
 let mediaStreamConstraint;
 
-let page = new Page(DOCUMENT_LANG);
+let page = new Page(document.documentElement.lang);
 let device = new Device();
 
 /**@type {Recorder|null} */
 let recorder = null;
+
 export const IS_MOBILE = device.checkIfMobile();
 export const IS_MOBILE_OR_TABLET = device.checkIfMobileOrTablet();
 
@@ -34,13 +33,17 @@ async function init() {
         .enumerateDevicesInSelect(deviceDetails.audio.deviceId, deviceDetails.video.deviceId, mediaStreamConstraint)
         .displayPossibilityToRecord();
 
+        if(!mediaStreamConstraint.video){
+            page.displayVideoDeviceUnavailable();
+        }
+
         recorder = new Recorder(page.traduction.recorder);
         recorder
         .setDeviceConstraint(mediaStreamConstraint, deviceDetails.audio.deviceId, deviceDetails.video.deviceId)
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
-            recorder?.openRecorder();
+            recorder.openRecorder();
         });
 
     } catch (status) {

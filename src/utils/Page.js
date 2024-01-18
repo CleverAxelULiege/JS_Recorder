@@ -40,6 +40,10 @@ export class Page {
         return this;
     }
 
+    displayVideoDeviceUnavailable(){
+        document.querySelector(".recorder_video_device_disabled").classList.remove("hidden");
+    }
+
     /**
      * 
      * @param {number} deviceStatus 
