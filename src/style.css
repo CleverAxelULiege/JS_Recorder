@@ -198,6 +198,7 @@ main h2 {
 
 .recorder_container {
     position: fixed;
+    overflow-y: scroll;
     display: flex;
     align-items: center;
     z-index: 1000;
