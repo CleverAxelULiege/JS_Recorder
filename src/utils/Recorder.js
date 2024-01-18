@@ -7,8 +7,8 @@ const TIME_SLICE_MEDIA_RECORDER = 1000;
 
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
-    width: 1280, //854
-    height: 720, //480
+    width: 854, //854
+    height: 480, //480
     frameRate: { ideal: 24, max: 24 },
     facingMode: "user",
     aspectRatio: 16 / 9,
@@ -93,7 +93,7 @@ export class Recorder {
             PAUSE_RESUME_BUTTON: document.querySelector("#pause_resume_recording_button"),
             TOGGLE_VIDEO_DEVICE_BUTTON: document.querySelector("#toggle_video_device_button"),
             PREVIEW_VIDEO: document.querySelector("#preview_video"),
-            RECORDED_VIDEO: null,
+            RECORDED_VIDEO: document.querySelector("#recorded_video"),
             TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".time_elapsed"),
             REQUEST_FULL_SCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
             PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".video_container")
@@ -126,24 +126,30 @@ export class Recorder {
     }
 
     /**
-     * @param {string|null} audioDeviceId 
-     * @param {string|null} videoDeviceId 
+     * 
+     * @returns {(audioDeviceId:string|null, videoDeviceId:string|null) => void}
      */
-    updateDevice(audioDeviceId, videoDeviceId) {
-        if(this.mediaStream == null || this.mediaStreamConstraint == null){
-            console.warn("Media stream or constraints not set");
-            return;
-        }
+    updateDevice() {
+        return (audioDeviceId, videoDeviceId) => {
+            if (this.mediaStream == null || this.mediaStreamConstraint == null) {
+                console.warn("Media stream or constraints not set");
+                return;
+            }
 
-        if(audioDeviceId){
-            this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
-        }
+            if (audioDeviceId != null) {
+                this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
+            }
 
-        if(videoDeviceId){
-            this.mediaStreamConstraint.video.deviceId = videoDeviceId;
+            if (videoDeviceId != null) {
+                this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
+            }
+
+            //obligé de redemander de lancer un stream pour prendre en compte le changement de périphérique
+            //car il se peut que le navigateur n'ait pas la permission d'utiliser le nouveau périph. choisi.
+            this.startStreamingToPreviewVideo().then(() => {
+                console.info("Changed device");
+            })
         }
-        console.log(this.mediaStreamConstraint);
-        this.mediaStream.getTracks()[0].applyConstraints(this.mediaStreamConstraint)
     }
 
     initEventListeners() {
@@ -201,6 +207,7 @@ export class Recorder {
     openRecorder() {
         if (this.mediaStream == null) {
             window.alert("No media stream available, the record will fail.");
+            return;
         }
 
         this.element.RECORDER_CONTAINER_DIV.classList.remove("hidden");
@@ -349,9 +356,9 @@ export class Recorder {
         this.mediaRecorder.onstop = () => {
             console.info("Stopped the recording");
             console.log(this.recordedChunks);
-            // let recordedBlob = new Blob(this.recordedChunks, { type: "video/webm" });
+            let recordedBlob = new Blob(this.recordedChunks, { type: "video/webm" });
 
-            // this.element.RECORDED_VIDEO.src = URL.createObjectURL(recordedBlob);
+            this.element.RECORDED_VIDEO.src = URL.createObjectURL(recordedBlob);
 
             // this.downloadButton.href = this.recordedVideo.src;
             // this.downloadButton.download = "RecordedVideo.webm";

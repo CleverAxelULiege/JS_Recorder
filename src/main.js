@@ -47,7 +47,7 @@ async function init() {
             recorder.openRecorder();
         });
 
-        page.updateDeviceToMediaConstraint(recorder.updateDevice);
+        page.updateDeviceToMediaConstraint(recorder.updateDevice());
 
     } catch (status) {
         page

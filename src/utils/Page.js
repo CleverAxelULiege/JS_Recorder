@@ -162,7 +162,7 @@ export class Page {
      * @private
      */
     buildPage() {
-        document.body.innerHTML = `
+        document.getElementById("root").innerHTML = `
         <div class="recorder_container hidden">
             <div class="recorder animation_enter_recorder">
                 <div class="close_button_container">
