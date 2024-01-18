@@ -1,4 +1,3 @@
-import { IS_MOBILE } from "../main.js";
 import "./typedefs.js";
 /**Gap entre les boutons de la preview video */
 const GAP = 5;
@@ -12,6 +11,7 @@ const VIDEO_CONSTRAINT = {
     height: 720, //480
     frameRate: { ideal: 24, max: 24 },
     facingMode: "user",
+    aspectRatio: 16 / 9,
     deviceId: undefined,
 };
 /**@type {MediaTrackConstraintSet} */
@@ -78,7 +78,7 @@ export class Recorder {
      * @param {ITraductionRecorder} tradRecorder 
      */
     constructor(tradRecorder) {
-        
+
         this.tradRecorder = tradRecorder;
 
         this.element = {
@@ -125,6 +125,27 @@ export class Recorder {
         return this;
     }
 
+    /**
+     * @param {string|null} audioDeviceId 
+     * @param {string|null} videoDeviceId 
+     */
+    updateDevice(audioDeviceId, videoDeviceId) {
+        if(this.mediaStream == null || this.mediaStreamConstraint == null){
+            console.warn("Media stream or constraints not set");
+            return;
+        }
+
+        if(audioDeviceId){
+            this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
+        }
+
+        if(videoDeviceId){
+            this.mediaStreamConstraint.video.deviceId = videoDeviceId;
+        }
+        console.log(this.mediaStreamConstraint);
+        this.mediaStream.getTracks()[0].applyConstraints(this.mediaStreamConstraint)
+    }
+
     initEventListeners() {
         if (this.mediaStreamConstraint == null) {
             console.error("No constraint passed");
@@ -142,7 +163,7 @@ export class Recorder {
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", this.stopRecording.bind(this));
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
-        
+
         // window.addEventListener("orientationchange", this.requestFullScreenWhenLandscapeOnMobile.bind(this));
         return this;
     }

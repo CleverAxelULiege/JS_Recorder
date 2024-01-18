@@ -45,6 +45,19 @@ export class Page {
     }
 
     /**
+     * @param {(audioDeviceId:string|null, videoDeviceId:string|null) => void} update 
+     */
+    updateDeviceToMediaConstraint(update){
+        this.element.AUDIO_DEVICE_SELECT.addEventListener("change", (e) => {
+            update(e.target.value, null);
+        });
+
+        this.element.VIDEO_DEVICE_SELECT.addEventListener("change", (e) => {
+            update(null, e.target.value);
+        });
+    }
+
+    /**
      * 
      * @param {number} deviceStatus 
      * @param {ITraductionErrorDevice} traduction 

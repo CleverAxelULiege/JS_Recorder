@@ -217,13 +217,12 @@ main h2 {
 
 .recorder {
     max-height: 100%;
-    width: 100%;
-    /* width: 900px; */
+    /* width: 100%; */
+    width: 900px;
     margin: 0 auto 10px auto;
     padding: 10px;
     border-radius: 10px;
     background-color: white;
-    /* transition: all 150ms ease-in-out; */
     transition: opacity 150ms ease-in-out 0ms, transform 150ms ease-in-out 75ms;
 }
 

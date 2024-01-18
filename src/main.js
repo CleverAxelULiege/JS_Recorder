@@ -47,6 +47,8 @@ async function init() {
             recorder.openRecorder();
         });
 
+        page.updateDeviceToMediaConstraint(recorder.updateDevice);
+
     } catch (status) {
         page
         .displayErrorsFromDevice(status, page.traduction.errorMessages.device)
