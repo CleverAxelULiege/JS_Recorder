@@ -1,0 +1,29 @@
+{
+    "device" : {
+        "audio" : "Périphérique audio",
+        "video" : "Périphérique vidéo"
+    },
+    "recorder":{
+        "main" : "Vous pouvez enregistrer votre message audio et/ou vidéo depuis ici en appuyant sur le bouton ci-dessous.",
+        "leaveWhileRecording" : "Vous êtes en train d'enregistrer une vidéo/piste audio, souhaitez-vous vraiment quitter ? Cela entrainera l'arrêt de l'enregistrement.",
+        "video":{
+            "disable": "Périphérique vidéo désactivé.",
+            "button":{
+                "stop" : "Arrêter l'enregistrement",
+                "pause" : "Mettre en pause l'enregistrement",
+                "resume" : "Reprendre l'enregistrement",
+                "start" : "Commencer l'enregistrement",
+                "toggleVideoDevice" : "Activer/désactiver la caméra"
+            }
+        }
+    },
+    "errorMessages" : {
+        "device":{
+            "default" : "Il vous est impossible d'enregistrer une vidéo depuis le site.<br><br>Néanmoins, vous avez toujours la possibilité d'upload(ou télécharger en amont) une vidéo enregistrée personnellement.",
+            "unavailableAudioDeviceVideoDevice" : "Aucun périphérique (audio ou vidéo) d'enregistrement n'a été détécté.",
+            "unavailablePermissionToUseDevices" : "Vous n'avez pas donné votre accord pour utiliser votre micro et/ou votre caméra.",
+            "unavailablePermissionToUseAudioDeviceWithVideoDevice" : "Vous ne pouvez pas enregistrer une vidéo sans son, veuillez donner votre accord pour utiliser votre micro.",
+            "unknownError": "Une erreur inconnue est survenue. Contactez le responsable."
+        }
+    }
+}

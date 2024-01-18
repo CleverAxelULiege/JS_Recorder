@@ -1,0 +1,381 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    font-size: 16px;
+    --main_font: 'Open Sans', sans-serif;
+    --second_font: 'Quicksand', sans-serif;
+    --light_gray: #fcfcfe;
+    --light_gray_200: #f0f0f0;
+    --gray: #e6e6e1;
+    --dark_gray: #acacac;
+    --cyan: #004851;
+    --light_cyan: #42838d;
+    --dark_cyan: #00373e;
+    --black: #2b2b2b;
+    --orange: #f6ae06;
+    --dark_orange: #da8b14;
+    --red: #c91010;
+    --blue: #065cac;
+    --magenta: #d4005f;
+}
+
+.hidden {
+    display: none;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--light_gray_200);
+    font-family: var(--main_font);
+}
+
+button {
+    cursor: pointer;
+    border-style: none;
+    outline: none;
+}
+
+select {
+    padding: 7px 10px;
+    font-size: 18px;
+    border-style: none;
+    cursor: pointer;
+}
+
+select:hover,
+select:focus {
+    outline: 1px solid var(--light_cyan);
+}
+
+main {
+    padding: 5px;
+    flex-grow: 1;
+}
+
+main>div.error_box {
+    color: var(--red);
+    padding: 0;
+}
+
+main>div.error_box p {
+    padding: 5px;
+}
+
+main>div {
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: white;
+    -webkit-box-shadow: 0px 5px 7px -6px #000000;
+    box-shadow: 0px 5px 7px -6px #000000;
+}
+
+main h2 {
+    font-family: var(--second_font);
+    font-size: 20px;
+    text-align: center;
+    font-weight: 300;
+}
+
+.button_container {
+    max-width: 1000px;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.display_recorder_button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    gap: 6px;
+    background-color: white;
+    border: 2px solid var(--light_cyan);
+    border-radius: 15px;
+    transition: all 150ms ease-in-out;
+}
+
+.display_recorder_button::after {
+    content: "";
+    position: absolute;
+    height: 30px;
+    width: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--black);
+    left: 43px;
+    transition: all 150ms ease-in-out;
+}
+
+.display_recorder_button:hover {
+    fill: white;
+    background-color: var(--light_cyan);
+}
+
+.display_recorder_button:hover::after {
+    background-color: white;
+}
+
+.display_recorder_button .icon_video {
+    width: 30px;
+}
+
+.display_recorder_button .icon_mic {
+    width: 20px;
+}
+
+.display_recorder_button .circle {
+    margin-left: 10px;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: var(--red);
+}
+
+.device_separator {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--dark_gray);
+    margin-bottom: 10px;
+}
+
+.device_container:first-child {
+    margin-bottom: 10px;
+}
+
+.device_container>div {
+    display: flex;
+    align-items: center;
+}
+
+.device_container>div label {
+    min-width: 200px;
+    font-size: 18px;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+
+.close_button_container {
+    display: flex;
+    justify-content: end;
+}
+
+.close_recorder_button {
+    background-color: transparent;
+    width: 40px;
+    height: 40px;
+}
+
+
+
+.recorder_container.hidden {
+    display: none;
+}
+
+.recorder_container {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 5px;
+}
+
+.animation_enter_recorder {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.recorder {
+    max-height: 100%;
+    width: 900px;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: white;
+    /* transition: all 150ms ease-in-out; */
+    transition: opacity 150ms ease-in-out 0ms, transform 150ms ease-in-out 75ms;
+}
+
+.recorder .video_container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.recorder .video_container video {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+.recorder_buttons_container {
+    gap: 5px;
+    position: absolute;
+    bottom: 7px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.recorder_pause_resume_rec_button.hidden,
+.recorder_stop_rec_button.hidden {
+    display: none;
+}
+
+.recorder_rec_button,
+.recorder_toggle_video_button,
+.recorder_stop_rec_button,
+.recorder_pause_resume_rec_button {
+    position: relative;
+    min-width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: 2px solid white;
+    transition: all 100ms ease-in-out;
+}
+
+.recorder_action_buttons_container{
+    position: absolute;
+    top: 0;
+    gap: 5px;
+    display: flex;
+    transition: all 100ms ease-in-out;
+}
+.recorder_action_buttons_container.off_screen{
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    gap: 5px;
+    display: flex;
+    transform: translateY(calc(100% + 20px));
+}
+
+/* .recorder_stop_rec_button, .recorder_pause_resume_rec_button{
+    position: absolute;
+    top: 0;
+}
+
+.recorder_stop_rec_button.off_screen,
+.recorder_pause_resume_rec_button.off_screen {
+    pointer-events: none;
+} */
+
+.recorder_rec_button .time_elapsed {
+    display: none;
+}
+
+.recorder_rec_button.active {
+    /* position: absolute; */
+    pointer-events: none;
+    padding-right: 5px;
+    transition-duration: 200ms;
+}
+
+.recorder_rec_button.active .title {
+    display: none;
+}
+
+.recorder_rec_button.active .time_elapsed {
+    display: block;
+}
+
+.recorder_rec_button.active .circle {
+    animation: blink_animation 1s steps(2, start) infinite;
+}
+
+.recorder_rec_button.active.paused .circle {
+    animation: none;
+}
+
+.recorder_toggle_video_button:disabled {
+    display: none;
+}
+
+.recorder_toggle_video_button.disabled_by_user::after {
+    content: "";
+    position: absolute;
+    background-color: var(--red);
+    width: 2px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    height: 40px;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+}
+
+.recorder_rec_button:hover,
+.recorder_toggle_video_button:hover,
+.recorder_stop_rec_button:hover,
+.recorder_pause_resume_rec_button:hover {
+    background-color: transparent;
+    color: white;
+    fill: white;
+}
+
+.recorder_stop_rec_button .square {
+    width: 15px;
+    height: 15px;
+    background-color: var(--black);
+    border-radius: 3px;
+}
+
+.recorder_stop_rec_button:hover .square {
+    background-color: white;
+}
+
+.recorder_rec_button .circle {
+    width: 15px;
+    height: 15px;
+    background-color: var(--red);
+    border-radius: 50%;
+}
+
+.recorder_video_device_disabled{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+footer {
+    margin-top: auto;
+}
+
+
+@keyframes blink_animation {
+    to {
+        visibility: hidden;
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "device" : {
+        "audio" : "Audio device",
+        "video" : "Video device"
+    },
+    "recorder":{
+        "main" : "You can record your audio and/or video message from here by pressing the button below.",
+        "leaveWhileRecording" : "You're recording a video/audio track, do you really want to quit? This will stop the recording.",
+        "video":{
+            "disable": "Video device disabled.",
+            "button":{
+                "stop" : "Stop the recording",
+                "pause" : "Pause the recording",
+                "resume" : "Resume the recording",
+                "start" : "Start the recording",
+                "toggleVideoDevice" : "Enable/disable the camera"
+            }
+        }
+    },
+    "errorMessages" : {
+        "device":{
+            "default" : "It is not possible to record a video from the site.<br><br>However, you always have the option of uploading a personally recorded video.",
+            "unavailableAudioDeviceVideoDevice" : "No recording device (audio or video) has been detected.",
+            "unavailablePermissionToUseDevices" : "You have not given your consent to use your microphone and/or camera.",
+            "unavailablePermissionToUseAudioDeviceWithVideoDevice" : "You can't record a video without sound, so please give your consent to use your microphone.",
+            "unknownError": "An unknown error has occurred. Please contact the person responsible."
+        }
+    }
+}
