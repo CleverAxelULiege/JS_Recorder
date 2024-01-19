@@ -8,7 +8,7 @@
         "leaveWhileRecording" : "You're recording a video/audio track, do you really want to quit? This will stop the recording.",
         "video":{
             "disable": "Video device disabled.",
-            "unavailable" : "Video device unavailable.",
+            "unavailable" : "Video device unavailable.<br> You still have the possibility to record an audio message.",
             "button":{
                 "stop" : "Stop the recording",
                 "pause" : "Pause the recording",

@@ -30,7 +30,7 @@
  * @property {HTMLButtonElement} TOGGLE_VIDEO_DEVICE_BUTTON
  * @property {HTMLDivElement} TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV
  * @property {HTMLVideoElement} PREVIEW_VIDEO
- * @property {HTMLVideoElement} RECORDED_VIDEO
+ * @property {HTMLVideoElement} RECORDED_ELEMENT
  * @property {HTMLVideoElement} PREVIEW_VIDEO_CONTAINER_DIV
  * @property {HTMLButtonElement} REQUEST_FULL_SCREEN_BUTTON
  * @property {HTMLSpanElement} TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN

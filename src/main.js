@@ -20,6 +20,7 @@ init();
 async function init() {
     (await page.fetchTraductionAndBuildPage()).retrieveDOMElements();
     try {
+        // console.log("audio/webm:"+MediaRecorder.isTypeSupported('audio/webm;codecs=opus'));
         //askPermissions peut rater et nous envoyer dans le CATCH
         let deviceDetails = await device.askPermissions();
 
@@ -44,7 +45,7 @@ async function init() {
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
-            recorder.openRecorder();
+            // recorder.openRecorder();
         });
 
         page.updateDeviceToMediaConstraint(recorder.updateDevice());

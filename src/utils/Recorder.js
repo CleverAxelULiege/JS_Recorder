@@ -1,4 +1,7 @@
 import "./typedefs.js";
+const VIDEO_MIME_TYPE = "video/webm";
+const AUDIO_MIME_TYPE = "audio/webm";
+
 /**Gap entre les boutons de la preview video */
 const GAP = 5;
 
@@ -68,6 +71,9 @@ export class Recorder {
     /**@private */
     isFullscreen = false;
 
+    /**@private */
+    mimeType = VIDEO_MIME_TYPE;
+
     /**
      * @private
      * @type {ITraductionRecorder}
@@ -94,7 +100,7 @@ export class Recorder {
             TOGGLE_VIDEO_DEVICE_BUTTON: document.querySelector("#toggle_video_device_button"),
             TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder_action_fs_tv_buttons_container"),
             PREVIEW_VIDEO: document.querySelector("#preview_video"),
-            RECORDED_VIDEO: document.querySelector("#recorded_video"),
+            RECORDED_ELEMENT: document.querySelector("#recorded_video"),
             TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".time_elapsed"),
             REQUEST_FULL_SCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
             PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".video_container")
@@ -118,13 +124,6 @@ export class Recorder {
             this.mediaStreamConstraint.video = { ...VIDEO_CONSTRAINT };
             this.mediaStreamConstraint.video.deviceId = videoDeviceId;
         } else {
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
             this.element.TOGGLE_VIDEO_DEVICE_BUTTON.disabled = true;
             //pas de périphérique vidéo donc je désactive le bouton
         }
@@ -178,9 +177,39 @@ export class Recorder {
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
 
-        this.element.RECORDED_VIDEO.addEventListener("loadedmetadata", () => {
-            console.log("VIDEO DURATION :" + this.element.RECORDED_VIDEO.duration);
-        })
+        //El famoso bug
+        //Des fois la durée de l'enregistrement est INFINIE et donc pour correctement la récupérer je suis obligé de faire ça :
+        //Sur Firefox : mettre le currentTime hyper loin ne marche pas donc je joue la vidéo aussi vite que possible et j'attends qu'elle finisse.
+        //Sur Edge/Chrome (donc j'imagine sous tous les navigateurs sous CHROMIUM, je l'espère) : mettre le currentTime très loin marche
+        //donc pas besoin d'attendre avec le playBackRate, néanmoins ils n'apprécient pas que je le mette à la limite d'un INT donc TRY-CATCH.
+        //Sur Safari : AUCUNE IDÉE YOLO.
+        this.element.RECORDED_ELEMENT.addEventListener("loadedmetadata", () => {
+            if(isNaN(Number(this.element.RECORDED_ELEMENT.duration)) || this.element.RECORDED_ELEMENT.duration == Infinity){
+                this.element.RECORDED_ELEMENT.play();
+                try{
+                    this.element.RECORDED_ELEMENT.playbackRate = 2147483647;
+                }catch{}
+                this.element.RECORDED_ELEMENT.currentTime  = 24*60*60;
+                this.element.RECORDED_ELEMENT.volume = 0;
+                console.log("Calculing video length...");
+                this.element.RECORDED_ELEMENT.addEventListener("ended", () => {
+                    console.log("in duration change");
+                    if(isNaN(this.element.RECORDED_ELEMENT.duration) || this.element.RECORDED_ELEMENT.duration == Infinity){
+                        return;
+                    }
+                    
+                    this.element.RECORDED_ELEMENT.playbackRate = 1;
+                    this.element.RECORDED_ELEMENT.play().then(() => {
+                        this.element.RECORDED_ELEMENT.currentTime = 0;
+                        this.element.RECORDED_ELEMENT.pause();
+                    });
+
+                }, {once:true});
+            } else {
+                console.log(this.element.RECORDED_ELEMENT.duration);
+            }
+            // console.log(this.element.RECORDED_ELEMENT.duration);
+        });
 
         // window.addEventListener("orientationchange", this.requestFullScreenWhenLandscapeOnMobile.bind(this));
         return this;
@@ -345,7 +374,7 @@ export class Recorder {
         this.animateButtonsIn();
         this.startCounterTimeElapsed();
         this.mediaRecorder = new MediaRecorder(this.mediaStream, {
-            mimeType: "video/webm",
+            mimeType: this.mimeType,
         });
         //video/webm; codecs="vp8, vorbis"
         this.initEventListenersOnMediaRecorder();
@@ -369,10 +398,10 @@ export class Recorder {
         this.mediaRecorder.onstop = () => {
             console.info("Stopped the recording");
             console.log(this.recordedChunks);
-            let recordedBlob = new Blob(this.recordedChunks, { type: "video/webm" });
+            let recordedBlob = new Blob(this.recordedChunks, { type: this.mimeType });
 
-            URL.revokeObjectURL(this.element.RECORDED_VIDEO.src);
-            this.element.RECORDED_VIDEO.src = URL.createObjectURL(recordedBlob);
+            URL.revokeObjectURL(this.element.RECORDED_ELEMENT.src);
+            this.element.RECORDED_ELEMENT.src = URL.createObjectURL(recordedBlob);
             // this.downloadButton.href = this.recordedVideo.src;
             // this.downloadButton.download = "RecordedVideo.webm";
         }

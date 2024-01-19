@@ -8,7 +8,7 @@
         "leaveWhileRecording" : "Vous êtes en train d'enregistrer une vidéo/piste audio, souhaitez-vous vraiment quitter ? Cela entrainera l'arrêt de l'enregistrement.",
         "video":{
             "disable": "Périphérique vidéo désactivé.",
-            "unavailable" : "Périphérique vidéo indisponible.",
+            "unavailable" : "Périphérique vidéo indisponible.<br>Vous pouvez toujours enregistrer un message audio.",
             "button":{
                 "stop" : "Arrêter l'enregistrement",
                 "pause" : "Mettre en pause l'enregistrement",
