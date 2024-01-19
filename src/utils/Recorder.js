@@ -74,10 +74,6 @@ export class Recorder {
     /**@private */
     mimeType = VIDEO_MIME_TYPE;
 
-    /**@private */
-    abortController = new AbortController();
-    isWaitingForVideoDuration = false;
-
     /**
      * @private
      * @type {ITraductionRecorder}
@@ -134,7 +130,6 @@ export class Recorder {
             //pas de périphérique vidéo donc je désactive le bouton
         }
 
-
         return this;
     }
 
@@ -183,61 +178,7 @@ export class Recorder {
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
 
-        //El famoso bug
-        //Des fois la durée de l'enregistrement est INFINIE et donc pour correctement la récupérer je suis obligé de faire ça :
-        //Sur Firefox : mettre le currentTime hyper loin ne marche pas donc je joue la vidéo aussi vite que possible et j'attends qu'elle finisse.
-        //Sur Edge/Chrome (donc j'imagine sous tous les navigateurs sous CHROMIUM, je l'espère) : mettre le currentTime très loin marche
-        //donc pas besoin d'attendre avec le playBackRate, néanmoins ils n'apprécient pas que je le mette à la limite d'un INT donc TRY-CATCH.
-        //Sur Safari : AUCUNE IDÉE YOLO.
-        this.element.RECORDED_ELEMENT.addEventListener("loadedmetadata", this.loadedMetaDataRecordedElement.bind(this));
-
-        document.querySelector(".shitty").addEventListener("click", () => {
-            this.element.RECORDED_ELEMENT.currentTime = 60;
-        });
-
-        // window.addEventListener("orientationchange", this.requestFullScreenWhenLandscapeOnMobile.bind(this));
         return this;
-    }
-
-    /**@private */
-    loadedMetaDataRecordedElement() {
-        //INFINITY, problème quelque part, on contourne le bug
-        if (isNaN(Number(this.element.RECORDED_ELEMENT.duration)) || this.element.RECORDED_ELEMENT.duration == Infinity) {
-
-            
-            this.abortController = new AbortController();
-
-            this.isWaitingForVideoDuration = true;
-            this.loaderRecordedElementUp();
-
-            this.element.RECORDED_ELEMENT.volume = 0;
-            this.element.RECORDED_ELEMENT.play();
-            this.element.RECORDED_ELEMENT.playbackRate = 16; //par défaut
-            try {
-                this.element.RECORDED_ELEMENT.playbackRate = 2147483647; //Va aussi vite que possible sur Firefox
-            } catch { }
-            this.element.RECORDED_ELEMENT.currentTime = 24 * 60 * 60; //Va à la fin sur les autres navigateurs
-
-            console.log("Calculing video length...");
-            this.element.RECORDED_ELEMENT.addEventListener("ended", () => {
-                // console.log("in duration change");
-                // if(isNaN(this.element.RECORDED_ELEMENT.duration) || this.element.RECORDED_ELEMENT.duration == Infinity){
-                //     return;
-                // }
-                this.isWaitingForVideoDuration = false;
-                this.loaderRecordedElementDown();
-
-                console.log(this.element.RECORDED_ELEMENT.duration);
-                this.element.RECORDED_ELEMENT.playbackRate = 1;
-                this.element.RECORDED_ELEMENT.play().then(() => {
-                    this.element.RECORDED_ELEMENT.currentTime = 0;
-                    this.element.RECORDED_ELEMENT.pause();
-                });
-
-            }, { once: true, signal: this.abortController.signal });
-        } else {
-            console.log(this.element.RECORDED_ELEMENT.duration);
-        }
     }
 
     /**@private */
@@ -393,18 +334,12 @@ export class Recorder {
             return;
         }
 
-        if (this.isWaitingForVideoDuration) {
-            this.abortController.abort();
-        }
-
         this.isRecording = true;
         this.recordedChunks = [];
 
         this.animateButtonsIn();
         this.startCounterTimeElapsed();
-        this.mediaRecorder = new MediaRecorder(this.mediaStream, {
-            mimeType: this.mimeType,
-        });
+        this.mediaRecorder = new MediaRecorder(this.mediaStream);
         //video/webm; codecs="vp8, vorbis"
         this.initEventListenersOnMediaRecorder();
         this.mediaRecorder.start(TIME_SLICE_MEDIA_RECORDER);

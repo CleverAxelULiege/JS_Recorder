@@ -251,13 +251,8 @@ export class Page {
             <div class="recorded_element_container hidden">
                 <h2>Votre message enregistré :</h2>
                 <div class="video_container">
-                    <div class="loader_container">
-                        <span class="loader"></span>
-                        <h3>Votre enregistrement est en cours de traitement...</h3>
-                    </div>
                     <video controls id="recorded_video"></video>
                 </div>
-                <button class="shitty">test</button>
             </div>
             
         </main>
