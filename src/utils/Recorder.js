@@ -7,9 +7,9 @@ const TIME_SLICE_MEDIA_RECORDER = 1000;
 
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
-    width: 854, //854
-    height: 480, //480
-    frameRate: { ideal: 24, max: 24 },
+    width: {min: 854, max: 1280}, //854
+    height: {min: 480, max: 720}, //480
+    frameRate: { min: 24, ideal: 30 },
     facingMode: "user",
     aspectRatio: 16 / 9,
     deviceId: undefined,
@@ -170,6 +170,10 @@ export class Recorder {
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
 
+        this.element.RECORDED_VIDEO.addEventListener("loadedmetadata", () => {
+            console.log("VIDEO DURATION :" + this.element.RECORDED_VIDEO.duration);
+        })
+
         // window.addEventListener("orientationchange", this.requestFullScreenWhenLandscapeOnMobile.bind(this));
         return this;
     }
@@ -239,7 +243,7 @@ export class Recorder {
     async closeRecorder() {
         if (this.isRecording) {
             if (window.confirm(this.tradRecorder.leaveWhileRecording)) {
-                await this.stopRecording();
+                await this.stopRecording(true);
                 return;
             }
         }
@@ -358,8 +362,8 @@ export class Recorder {
             console.log(this.recordedChunks);
             let recordedBlob = new Blob(this.recordedChunks, { type: "video/webm" });
 
+            URL.revokeObjectURL(this.element.RECORDED_VIDEO.src);
             this.element.RECORDED_VIDEO.src = URL.createObjectURL(recordedBlob);
-
             // this.downloadButton.href = this.recordedVideo.src;
             // this.downloadButton.download = "RecordedVideo.webm";
         }
@@ -368,7 +372,7 @@ export class Recorder {
     /**
      * @private
      */
-    async stopRecording() {
+    async stopRecording(closeRecorderOnStop = false) {
         if (!this.isRecording) {
             console.warn("Not recording");
             return;
@@ -378,7 +382,9 @@ export class Recorder {
         this.mediaRecorder?.stop();
         clearInterval(this.idInterval);
         await this.animateButtonsOut();
-        this.closeRecorder();
+
+        if(closeRecorderOnStop)
+            this.closeRecorder();
     }
 
     /**
