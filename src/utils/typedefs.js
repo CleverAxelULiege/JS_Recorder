@@ -34,6 +34,9 @@
  * @property {HTMLVideoElement} PREVIEW_VIDEO_CONTAINER_DIV
  * @property {HTMLButtonElement} REQUEST_FULL_SCREEN_BUTTON
  * @property {HTMLSpanElement} TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN
+ * @property {HTMLDivElement} LOADER_CONTAINER_DIV
+ * @property {HTMLDivElement} LOADER_CONTAINER_DIV
+ * @property {HTMLDivElement} RECORDED_ELEMENT_CONTAINER_DIV
  */
 //#endregion
 

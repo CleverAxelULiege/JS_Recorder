@@ -164,7 +164,7 @@ main h2 {
     flex-wrap: wrap;
 }
 
-.device_container>div select{
+.device_container>div select {
     width: 100%;
     max-width: 350px;
     min-width: 250px;
@@ -273,7 +273,7 @@ main h2 {
     transition: all 100ms ease-in-out;
 }
 
-.recorder_action_buttons_container{
+.recorder_action_buttons_container {
     position: absolute;
     top: 0;
     gap: 5px;
@@ -281,13 +281,13 @@ main h2 {
     transition: all 100ms ease-in-out;
 }
 
-.recorder_action_fs_tv_buttons_container{
+.recorder_action_fs_tv_buttons_container {
     display: flex;
     gap: 5px;
     transition: all 100ms ease-in-out;
 }
 
-.recorder_action_buttons_container.off_screen{
+.recorder_action_buttons_container.off_screen {
     opacity: 0;
     pointer-events: none;
     position: absolute;
@@ -296,16 +296,6 @@ main h2 {
     display: flex;
     transform: translateY(calc(100% + 20px));
 }
-
-/* .recorder_stop_rec_button, .recorder_pause_resume_rec_button{
-    position: absolute;
-    top: 0;
-}
-
-.recorder_stop_rec_button.off_screen,
-.recorder_pause_resume_rec_button.off_screen {
-    pointer-events: none;
-} */
 
 .recorder_rec_button .time_elapsed {
     display: none;
@@ -379,7 +369,7 @@ main h2 {
     border-radius: 50%;
 }
 
-.recorder_video_device_disabled{
+h3.recorder_video_device_disabled {
     text-align: center;
     position: absolute;
     top: 50%;
@@ -387,6 +377,64 @@ main h2 {
     transform: translate(-50%, -50%);
     color: white;
     user-select: none;
+}
+
+.recorded_element_container {
+    max-width: 900px;
+    margin: 10px auto 0 auto;
+    padding: 10px;
+}
+
+.recorded_element_container .video_container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 15px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.recorded_element_container .video_container video {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+.recorded_element_container .video_container .loader_container.hidden{
+    display: none;
+}
+.recorded_element_container .video_container .loader_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.recorded_element_container .video_container .loader {
+    width: 100px;
+    height: 100px;
+    border: 5px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    animation: rotation 1.5s linear infinite;
+}
+
+.recorded_element_container .video_container .loader_container h3{
+    color: white;
+    position: absolute;
+    bottom: 40px;
+    text-align: center;
+}
+
+.recorded_element_container h2 {
+    text-align: left;
 }
 
 footer {
@@ -397,5 +445,15 @@ footer {
 @keyframes blink_animation {
     to {
         visibility: hidden;
+    }
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }

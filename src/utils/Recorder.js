@@ -10,8 +10,8 @@ const TIME_SLICE_MEDIA_RECORDER = 1000;
 
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
-    width: {min: 854, max: 1280}, //854
-    height: {min: 480, max: 720}, //480
+    width: { min: 854, max: 1280 }, //854
+    height: { min: 480, max: 720 }, //480
     frameRate: { min: 24, ideal: 30 },
     facingMode: "user",
     aspectRatio: 16 / 9,
@@ -74,6 +74,10 @@ export class Recorder {
     /**@private */
     mimeType = VIDEO_MIME_TYPE;
 
+    /**@private */
+    abortController = new AbortController();
+    isWaitingForVideoDuration = false;
+
     /**
      * @private
      * @type {ITraductionRecorder}
@@ -103,7 +107,9 @@ export class Recorder {
             RECORDED_ELEMENT: document.querySelector("#recorded_video"),
             TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".time_elapsed"),
             REQUEST_FULL_SCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
-            PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".video_container")
+            PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".video_container"),
+            RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
+            LOADER_CONTAINER_DIV: document.querySelector(".loader_container"),
         };
     }
 
@@ -183,36 +189,55 @@ export class Recorder {
         //Sur Edge/Chrome (donc j'imagine sous tous les navigateurs sous CHROMIUM, je l'espère) : mettre le currentTime très loin marche
         //donc pas besoin d'attendre avec le playBackRate, néanmoins ils n'apprécient pas que je le mette à la limite d'un INT donc TRY-CATCH.
         //Sur Safari : AUCUNE IDÉE YOLO.
-        this.element.RECORDED_ELEMENT.addEventListener("loadedmetadata", () => {
-            if(isNaN(Number(this.element.RECORDED_ELEMENT.duration)) || this.element.RECORDED_ELEMENT.duration == Infinity){
-                this.element.RECORDED_ELEMENT.play();
-                try{
-                    this.element.RECORDED_ELEMENT.playbackRate = 2147483647;
-                }catch{}
-                this.element.RECORDED_ELEMENT.currentTime  = 24*60*60;
-                this.element.RECORDED_ELEMENT.volume = 0;
-                console.log("Calculing video length...");
-                this.element.RECORDED_ELEMENT.addEventListener("ended", () => {
-                    console.log("in duration change");
-                    if(isNaN(this.element.RECORDED_ELEMENT.duration) || this.element.RECORDED_ELEMENT.duration == Infinity){
-                        return;
-                    }
-                    
-                    this.element.RECORDED_ELEMENT.playbackRate = 1;
-                    this.element.RECORDED_ELEMENT.play().then(() => {
-                        this.element.RECORDED_ELEMENT.currentTime = 0;
-                        this.element.RECORDED_ELEMENT.pause();
-                    });
+        this.element.RECORDED_ELEMENT.addEventListener("loadedmetadata", this.loadedMetaDataRecordedElement.bind(this));
 
-                }, {once:true});
-            } else {
-                console.log(this.element.RECORDED_ELEMENT.duration);
-            }
-            // console.log(this.element.RECORDED_ELEMENT.duration);
+        document.querySelector(".shitty").addEventListener("click", () => {
+            this.element.RECORDED_ELEMENT.currentTime = 60;
         });
 
         // window.addEventListener("orientationchange", this.requestFullScreenWhenLandscapeOnMobile.bind(this));
         return this;
+    }
+
+    /**@private */
+    loadedMetaDataRecordedElement() {
+        //INFINITY, problème quelque part, on contourne le bug
+        if (isNaN(Number(this.element.RECORDED_ELEMENT.duration)) || this.element.RECORDED_ELEMENT.duration == Infinity) {
+
+            
+            this.abortController = new AbortController();
+
+            this.isWaitingForVideoDuration = true;
+            this.loaderRecordedElementUp();
+
+            this.element.RECORDED_ELEMENT.volume = 0;
+            this.element.RECORDED_ELEMENT.play();
+            this.element.RECORDED_ELEMENT.playbackRate = 16; //par défaut
+            try {
+                this.element.RECORDED_ELEMENT.playbackRate = 2147483647; //Va aussi vite que possible sur Firefox
+            } catch { }
+            this.element.RECORDED_ELEMENT.currentTime = 24 * 60 * 60; //Va à la fin sur les autres navigateurs
+
+            console.log("Calculing video length...");
+            this.element.RECORDED_ELEMENT.addEventListener("ended", () => {
+                // console.log("in duration change");
+                // if(isNaN(this.element.RECORDED_ELEMENT.duration) || this.element.RECORDED_ELEMENT.duration == Infinity){
+                //     return;
+                // }
+                this.isWaitingForVideoDuration = false;
+                this.loaderRecordedElementDown();
+
+                console.log(this.element.RECORDED_ELEMENT.duration);
+                this.element.RECORDED_ELEMENT.playbackRate = 1;
+                this.element.RECORDED_ELEMENT.play().then(() => {
+                    this.element.RECORDED_ELEMENT.currentTime = 0;
+                    this.element.RECORDED_ELEMENT.pause();
+                });
+
+            }, { once: true, signal: this.abortController.signal });
+        } else {
+            console.log(this.element.RECORDED_ELEMENT.duration);
+        }
     }
 
     /**@private */
@@ -368,6 +393,10 @@ export class Recorder {
             return;
         }
 
+        if (this.isWaitingForVideoDuration) {
+            this.abortController.abort();
+        }
+
         this.isRecording = true;
         this.recordedChunks = [];
 
@@ -421,14 +450,26 @@ export class Recorder {
         clearInterval(this.idInterval);
         await this.animateButtonsOut();
 
-        if(this.isFullscreen){
+        if (this.isFullscreen) {
             this.isFullscreen = false;
             document.exitFullscreen();
         }
 
-        if(closeRecorderOnStop){
+        this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
+
+        if (closeRecorderOnStop) {
             this.closeRecorder();
         }
+    }
+
+    /**@private */
+    loaderRecordedElementUp() {
+        this.element.LOADER_CONTAINER_DIV.classList.remove("hidden");
+    }
+
+    /**@private */
+    loaderRecordedElementDown() {
+        this.element.LOADER_CONTAINER_DIV.classList.add("hidden");
     }
 
     /**
@@ -443,7 +484,7 @@ export class Recorder {
 
         this.element.START_RECORDING_BUTTON.addEventListener("transitionend", () => {
             if (this.mediaStreamConstraint?.video) {
-                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = `translateX(-${(buttonWidth * 2) + (GAP * 2 + GAP/2)}px)`;
+                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = `translateX(-${(buttonWidth * 2) + (GAP * 2 + GAP / 2)}px)`;
                 this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = `translateX(${(buttonWidth / 2) + GAP}px)`;
             } else {
                 this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = `translateX(-${(buttonWidth * 1.5) + (GAP * 2)}px)`;
