@@ -92,6 +92,7 @@ export class Recorder {
             RECORDER_ACTION_BUTTONS_CONTAINER_DIV: document.querySelector(".recorder_action_buttons_container"),
             PAUSE_RESUME_BUTTON: document.querySelector("#pause_resume_recording_button"),
             TOGGLE_VIDEO_DEVICE_BUTTON: document.querySelector("#toggle_video_device_button"),
+            TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder_action_fs_tv_buttons_container"),
             PREVIEW_VIDEO: document.querySelector("#preview_video"),
             RECORDED_VIDEO: document.querySelector("#recorded_video"),
             TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".time_elapsed"),
@@ -117,6 +118,13 @@ export class Recorder {
             this.mediaStreamConstraint.video = { ...VIDEO_CONSTRAINT };
             this.mediaStreamConstraint.video.deviceId = videoDeviceId;
         } else {
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
             this.element.TOGGLE_VIDEO_DEVICE_BUTTON.disabled = true;
             //pas de périphérique vidéo donc je désactive le bouton
         }
@@ -166,7 +174,7 @@ export class Recorder {
         this.element.TOGGLE_VIDEO_DEVICE_BUTTON.addEventListener("click", this.toggleVideoDevice.bind(this))
 
         this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeVideo.bind(this));
-        this.element.STOP_RECORDING_BUTTON.addEventListener("click", this.stopRecording.bind(this));
+        this.element.STOP_RECORDING_BUTTON.addEventListener("click", () => this.stopRecording(false));
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
 
@@ -230,7 +238,8 @@ export class Recorder {
             window.alert("Didn't get the permission to use the video device or it doesn't exist.");
             return;
         }
-        if (this.mediaStream != null) {
+        if (this.mediaStream != null && this.mediaStreamConstraint.video) {
+            this.element.VIDEO_DEVICE_DISABLED_H3.innerText = this.tradRecorder.video.disable;
             this.element.VIDEO_DEVICE_DISABLED_H3.classList.toggle("hidden");
             this.mediaStream.getVideoTracks()[0].enabled = !this.mediaStream.getVideoTracks()[0].enabled;
             this.element.TOGGLE_VIDEO_DEVICE_BUTTON.classList.toggle("disabled_by_user");
@@ -383,22 +392,32 @@ export class Recorder {
         clearInterval(this.idInterval);
         await this.animateButtonsOut();
 
-        if(closeRecorderOnStop)
+        if(this.isFullscreen){
+            this.isFullscreen = false;
+            document.exitFullscreen();
+        }
+
+        if(closeRecorderOnStop){
             this.closeRecorder();
+        }
     }
 
     /**
      * @private
      */
     animateButtonsIn() {
-        let buttonWidth = this.element.TOGGLE_VIDEO_DEVICE_BUTTON.getBoundingClientRect().width;
+        // let buttonWidth = this.element.TOGGLE_VIDEO_DEVICE_BUTTON.getBoundingClientRect().width;
+        let buttonWidth = 50;
         this.element.START_RECORDING_BUTTON.classList.add("active");
         let offsetLeft = this.element.START_RECORDING_BUTTON.offsetLeft - 10;
         this.element.START_RECORDING_BUTTON.style.transform = `translateX(-${offsetLeft}px)`;
 
         this.element.START_RECORDING_BUTTON.addEventListener("transitionend", () => {
             if (this.mediaStreamConstraint?.video) {
-                this.element.TOGGLE_VIDEO_DEVICE_BUTTON.style.transform = `translateX(-${buttonWidth + (buttonWidth / 2) + (GAP * 2)}px)`;
+                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = `translateX(-${(buttonWidth * 2) + (GAP * 2 + GAP/2)}px)`;
+                this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = `translateX(${(buttonWidth / 2) + GAP}px)`;
+            } else {
+                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = `translateX(-${(buttonWidth * 1.5) + (GAP * 2)}px)`;
                 this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = `translateX(${(buttonWidth / 2) + GAP}px)`;
             }
 
@@ -415,10 +434,9 @@ export class Recorder {
         return new Promise((resolve) => {
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.classList.add("off_screen");
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.addEventListener("transitionend", () => {
-                if (this.mediaStreamConstraint?.video) {
-                    this.element.TOGGLE_VIDEO_DEVICE_BUTTON.style.transform = ``;
-                    this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = ``;
-                }
+                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = ``;
+                this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = ``;
+
 
                 this.element.START_RECORDING_BUTTON.classList.remove("active");
                 this.element.START_RECORDING_BUTTON.style.transform = ``;

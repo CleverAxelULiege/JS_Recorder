@@ -279,6 +279,13 @@ main h2 {
     display: flex;
     transition: all 100ms ease-in-out;
 }
+
+.recorder_action_fs_tv_buttons_container{
+    display: flex;
+    gap: 5px;
+    transition: all 100ms ease-in-out;
+}
+
 .recorder_action_buttons_container.off_screen{
     opacity: 0;
     pointer-events: none;

@@ -28,6 +28,7 @@
  * @property {HTMLButtonElement} PAUSE_RESUME_BUTTON
  * @property {HTMLDivElement} RECORDER_ACTION_BUTTONS_CONTAINER_DIV
  * @property {HTMLButtonElement} TOGGLE_VIDEO_DEVICE_BUTTON
+ * @property {HTMLDivElement} TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV
  * @property {HTMLVideoElement} PREVIEW_VIDEO
  * @property {HTMLVideoElement} RECORDED_VIDEO
  * @property {HTMLVideoElement} PREVIEW_VIDEO_CONTAINER_DIV
@@ -61,6 +62,7 @@
  * @property {string} leaveWhileRecording
  * @property {{
         * disable:string,
+        * unavailable:string,
         * button:{
             * stop:string,
             * resume:string,
