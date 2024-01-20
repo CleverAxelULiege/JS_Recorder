@@ -14,7 +14,7 @@ const VIDEO_CONSTRAINT = {
     height: {ideal: 720},//{ min: 480, max: 720 }, //480
     // frameRate: { min: 24, ideal: 30 },
     facingMode: "user",
-    aspectRatio: { exact: 1.7777777778},
+    aspectRatio: { exact: 16/9},
     deviceId: undefined,
 };
 /**@type {MediaTrackConstraintSet} */
