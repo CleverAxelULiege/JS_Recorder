@@ -10,9 +10,9 @@ const TIME_SLICE_MEDIA_RECORDER = 1000;
 
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
-    width: {ideal: 1280},//{ min: 854, max: 1280 }, //854
-    height: {ideal: 720},//{ min: 480, max: 720 }, //480
-    frameRate: { min: 24, ideal: 30 },
+    width: {ideal: 4096},//{ min: 854, max: 1280 }, //854
+    height: {ideal: 2160},//{ min: 480, max: 720 }, //480
+    // frameRate: { min: 24, ideal: 30 },
     facingMode: "user",
     // aspectRatio: 16 / 9,
     deviceId: undefined,
