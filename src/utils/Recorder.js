@@ -253,6 +253,8 @@ export class Recorder {
             if (window.confirm(this.tradRecorder.leaveWhileRecording)) {
                 await this.stopRecording(true);
                 return;
+            } else {
+                return;
             }
         }
 
@@ -365,7 +367,6 @@ export class Recorder {
 
         this.mediaRecorder.onstop = () => {
             console.info("Stopped the recording");
-            console.log(this.recordedChunks);
             let recordedBlob = new Blob(this.recordedChunks, { type: this.mimeType });
 
             URL.revokeObjectURL(this.element.RECORDED_ELEMENT.src);
