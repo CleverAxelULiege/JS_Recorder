@@ -171,6 +171,10 @@ export class Recorder {
         window.addEventListener("click", this.closerecorderIfClickOutsideOfIt.bind(this));
 
         this.element.START_RECORDING_BUTTON.addEventListener("click", this.startRecording.bind(this));
+        window.addEventListener("resize", () => {
+            if(!this.isRecording) return;
+            this.translateRecButtonToTheRight();
+        });
         this.element.TOGGLE_VIDEO_DEVICE_BUTTON.addEventListener("click", this.toggleVideoDevice.bind(this))
 
         this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeVideo.bind(this));
@@ -385,6 +389,14 @@ export class Recorder {
         clearInterval(this.idInterval);
         await this.animateButtonsOut();
 
+        if(this.isPaused){
+            this.element.PAUSE_RESUME_BUTTON.querySelector(".pause_icon")?.classList.remove("hidden");
+            this.element.PAUSE_RESUME_BUTTON.querySelector(".resume_icon")?.classList.add("hidden");
+            this.element.PAUSE_RESUME_BUTTON.title = this.tradRecorder.video.button.pause;
+            this.element.START_RECORDING_BUTTON.classList.remove("paused");
+            this.isPaused = false;
+        }
+
         if (this.isFullscreen) {
             this.isFullscreen = false;
             document.exitFullscreen();
@@ -397,38 +409,23 @@ export class Recorder {
         }
     }
 
-    /**@private */
-    loaderRecordedElementUp() {
-        this.element.LOADER_CONTAINER_DIV.classList.remove("hidden");
-    }
-
-    /**@private */
-    loaderRecordedElementDown() {
-        this.element.LOADER_CONTAINER_DIV.classList.add("hidden");
-    }
-
     /**
      * @private
      */
     animateButtonsIn() {
-        // let buttonWidth = this.element.TOGGLE_VIDEO_DEVICE_BUTTON.getBoundingClientRect().width;
-        let buttonWidth = 50;
         this.element.START_RECORDING_BUTTON.classList.add("active");
-        let offsetLeft = this.element.START_RECORDING_BUTTON.offsetLeft - 10;
-        this.element.START_RECORDING_BUTTON.style.transform = `translateX(-${offsetLeft}px)`;
+        this.translateRecButtonToTheRight();
 
         this.element.START_RECORDING_BUTTON.addEventListener("transitionend", () => {
-            if (this.mediaStreamConstraint?.video) {
-                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = `translateX(-${(buttonWidth * 2) + (GAP * 2 + GAP / 2)}px)`;
-                this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = `translateX(${(buttonWidth / 2) + GAP}px)`;
-            } else {
-                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = `translateX(-${(buttonWidth * 1.5) + (GAP * 2)}px)`;
-                this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = `translateX(${(buttonWidth / 2) + GAP}px)`;
-            }
-
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.classList.remove("off_screen");
-
+            this.element.START_RECORDING_BUTTON.style.transition = "none";
         }, { once: true });
+    }
+
+    /**@private */
+    translateRecButtonToTheRight(){
+        let offsetLeft = this.element.START_RECORDING_BUTTON.offsetLeft - GAP * 2;
+        this.element.START_RECORDING_BUTTON.style.transform = `translateX(${offsetLeft}px)`;
     }
 
     /**
@@ -439,12 +436,9 @@ export class Recorder {
         return new Promise((resolve) => {
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.classList.add("off_screen");
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.addEventListener("transitionend", () => {
-                this.element.TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV.style.transform = ``;
-                this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.style.transform = ``;
-
-
                 this.element.START_RECORDING_BUTTON.classList.remove("active");
-                this.element.START_RECORDING_BUTTON.style.transform = ``;
+                this.element.START_RECORDING_BUTTON.style.transform = "";
+                this.element.START_RECORDING_BUTTON.style.transition = "";
                 resolve();
             }, { once: true });
         })

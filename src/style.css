@@ -97,6 +97,12 @@ main h2 {
     gap: 10px;
 }
 
+
+
+
+
+
+/***********************************/
 .display_recorder_button {
     position: relative;
     display: flex;
@@ -109,6 +115,7 @@ main h2 {
     transition: all 150ms ease-in-out;
 }
 
+/*Barre de séparation entre l'icone de mic et de vidéo*/
 .display_recorder_button::after {
     content: "";
     position: absolute;
@@ -146,7 +153,13 @@ main h2 {
     border-radius: 50%;
     background-color: var(--red);
 }
+/***************************************/
 
+
+
+
+/**************************************/
+/*Sélection des différents périph détéctés*/
 .device_separator {
     width: 100%;
     border: none;
@@ -178,6 +191,10 @@ main h2 {
     align-items: center;
     gap: 2px;
 }
+/****************************/
+
+
+
 
 
 .close_button_container {
@@ -190,8 +207,6 @@ main h2 {
     width: 40px;
     height: 40px;
 }
-
-
 
 .recorder_container.hidden {
     display: none;
@@ -217,8 +232,6 @@ main h2 {
 }
 
 .recorder {
-    /* max-height: 100%; */
-    /* width: 100%; */
     width: 900px;
     margin: 0 auto 10px auto;
     padding: 10px;
@@ -246,10 +259,12 @@ main h2 {
     position: absolute;
     bottom: 7px;
     width: 100%;
+    height: 50px;
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
 }
 
+/*MAYBE USELESS*/
 .recorder_pause_resume_rec_button.hidden,
 .recorder_stop_rec_button.hidden {
     display: none;
@@ -273,28 +288,42 @@ main h2 {
     transition: all 100ms ease-in-out;
 }
 
-.recorder_action_buttons_container {
+.recorder_rec_button{
     position: absolute;
-    top: 0;
-    gap: 5px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+
+.recorder_action_fs_tv_buttons_container {
+    position: absolute;
+    left: 5px;
+    bottom: 0;
     display: flex;
+    flex-direction: column;
+    gap: 5px;
     transition: all 100ms ease-in-out;
 }
 
-.recorder_action_fs_tv_buttons_container {
-    display: flex;
+/*PAUSE STOP*/
+.recorder_action_buttons_container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     gap: 5px;
+    display: flex;
     transition: all 100ms ease-in-out;
 }
 
 .recorder_action_buttons_container.off_screen {
     opacity: 0;
     pointer-events: none;
-    position: absolute;
     top: 0;
     gap: 5px;
     display: flex;
-    transform: translateY(calc(100% + 20px));
+    transform: translateY(calc(100% + 20px)) translateX(-50%);
 }
 
 .recorder_rec_button .time_elapsed {
@@ -302,7 +331,6 @@ main h2 {
 }
 
 .recorder_rec_button.active {
-    /* position: absolute; */
     pointer-events: none;
     padding-right: 5px;
     transition-duration: 200ms;
