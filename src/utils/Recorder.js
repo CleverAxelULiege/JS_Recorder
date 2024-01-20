@@ -424,7 +424,7 @@ export class Recorder {
 
     /**@private */
     translateRecButtonToTheRight(){
-        let offsetLeft = this.element.START_RECORDING_BUTTON.offsetLeft - GAP * 2;
+        let offsetLeft = this.element.START_RECORDING_BUTTON.offsetLeft - GAP * 13;
         this.element.START_RECORDING_BUTTON.style.transform = `translateX(${offsetLeft}px)`;
     }
 
