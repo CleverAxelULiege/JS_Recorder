@@ -179,7 +179,7 @@ export class Page {
                     <div class="recorder_buttons_container">
 
                         <button title="${this.traduction.recorder.video.button.start}" class="recorder_rec_button" id="start_recording_button">
-                            <div class="popup">Commencer votre enregistrement<div class="pointer"></div></div>
+                            <div class="popup">${this.traduction.recorder.popUpStartRecording}</div>
                             <span class="title">REC</span>
                             <span class="circle"></span>
                             <span class="time_elapsed"></span>
@@ -255,7 +255,7 @@ export class Page {
             </div>
 
             <div class="recorded_element_container hidden">
-                <h2>Votre message enregistré :</h2>
+                <h2>${this.traduction.recorded.main} :</h2>
                 <div class="video_container">
                     <video controls id="recorded_video"></video>
                 </div>

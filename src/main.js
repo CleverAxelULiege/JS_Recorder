@@ -51,9 +51,6 @@ async function init() {
         });
 
         page.updateDeviceToMediaConstraint(recorder.updateDevice());
-
-        // let audioVisualizer = new AudioVisualizer();
-
     } catch (status) {
         page
         .displayErrorsFromDevice(status, page.traduction.errorMessages.device)

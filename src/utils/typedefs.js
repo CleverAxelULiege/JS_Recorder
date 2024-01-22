@@ -45,6 +45,7 @@
  * @typedef ITraduction
  * @property {{audio:string, video:string}} device
  * @property {ITraductionRecorder} recorder
+ * @property {ITraductionRecorded} recorded
  * @property {{
  *  device:ITraductionErrorDevice
  * }} errorMessages
@@ -60,9 +61,16 @@
  */
 
 /**
+ * @typedef ITraductionRecorded
+ * @property {string} main
+ */
+
+/**
  * @typedef ITraductionRecorder
  * @property {string} main
+ * @property {string} overwritePreviousRecording
  * @property {string} leaveWhileRecording
+ * @property {string} popUpStartRecording
  * @property {{
         * disable:string,
         * unavailable:string,

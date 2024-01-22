@@ -6,6 +6,8 @@
     "recorder":{
         "main" : "Vous pouvez enregistrer votre message audio et/ou vidéo depuis ici en appuyant sur le bouton ci-dessous.",
         "leaveWhileRecording" : "Vous êtes en train d'enregistrer une vidéo/piste audio, souhaitez-vous vraiment quitter ? Cela entrainera l'arrêt de l'enregistrement.",
+        "overwritePreviousRecording": "Vous êtes sur le point d'enregistrer un nouvel enregistrement, ceci effacera l'enregistrement précédent, continuer ?",
+        "popUpStartRecording" : "Commencer l'enregistrement",
         "video":{
             "disable": "Périphérique vidéo désactivé.",
             "unavailable" : "Périphérique vidéo indisponible.<br>Vous pouvez toujours enregistrer un message audio.",
@@ -18,6 +20,9 @@
                 "requestFullScreen" : "Activer/désactiver le plein écran"
             }
         }
+    },
+    "recorded":{
+        "main" : "Votre message enregistré"
     },
     "errorMessages" : {
         "device":{
