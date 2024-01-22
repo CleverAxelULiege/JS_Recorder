@@ -42,6 +42,11 @@ export class Device {
         return check;
     }
 
+    checkIfTouchScreen(){
+        return (('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0));
+    }
+
     /**
      * @returns {Promise<{audio:IDeviceDetails, video:IDeviceDetails}>}
      */
