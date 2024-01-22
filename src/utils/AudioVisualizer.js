@@ -5,7 +5,32 @@ export class AudioVisualizer {
      */
     canvas = document.querySelector(".audio_visualizer");
 
+    /**@private */
     idRequestFrame = null;
+
+    /**
+     * @private
+     * @type {AudioContext|null}
+     */
+    audioCtx = null
+
+    /** @type {MediaStreamTrack|null}*/
+    mediaStreamTrack = null
+
+    /**
+     * @private
+     * @type {AnalyserNode}
+     */
+    analyser = null;
+
+    /**@private */
+    bufferLength = 0;
+
+    /**
+     * @private
+     * @type {Uint8Array}
+     */
+    dataArray = null;
 
     /**
      * @private
@@ -13,30 +38,49 @@ export class AudioVisualizer {
      */
     source = null
 
+    /**@private */
     isActive = false;
 
 
     constructor() {
-        /**@private */
-        this.audioCtx = new AudioContext();
+        // /**@private */
+        // this.audioCtx = null;
 
-        this.mediaStreamTrack = this.canvas.captureStream().getVideoTracks()[0];
+        // this.mediaStreamTrack = null;
 
-        /**@private */
-        this.analyser = this.audioCtx.createAnalyser();
-        this.analyser.fftSize = 2048;
+        // /**@private */
+        // this.analyser = null;
+        // this.analyser.fftSize = 2048;
 
-        /**@private */
-        this.bufferLength = this.analyser.frequencyBinCount;
+        // /**@private */
+        // this.bufferLength = null;
 
-        /**@private */
-        this.dataArray = new Uint8Array(this.bufferLength);
+        // /**@private */
+        // this.dataArray = null;
 
         /**@private */
         this.canvasCtx = this.canvas.getContext("2d");
 
         this.resizeCanvas();
         this.initEventListeners();
+    }
+
+    /**
+     * @param {MediaStream} mediaStream 
+     */
+    init(mediaStream){
+        this.audioCtx = new AudioContext();
+
+        this.analyser = this.audioCtx.createAnalyser();
+        this.analyser.fftSize = 2048;
+
+        this.source = this.audioCtx.createMediaStreamSource(mediaStream);
+        this.source.connect(this.analyser);
+        
+        this.bufferLength = this.analyser.frequencyBinCount;
+        this.dataArray = new Uint8Array(this.bufferLength);
+        
+        this.mediaStreamTrack = this.canvas.captureStream().getVideoTracks()[0];
     }
 
     /**

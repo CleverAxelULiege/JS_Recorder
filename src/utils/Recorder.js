@@ -237,10 +237,8 @@ export class Recorder {
             navigator.mediaDevices.getUserMedia(this.mediaStreamConstraint)
                 .then((stream) => {
                     this.mediaStream = stream;
-
-                    this.audioVisualizer
-                        .setAndConnectSourceMediaStream(this.mediaStream);
-                        
+                    
+                    this.audioVisualizer.init(this.mediaStream);
 
                     if (this.mediaStreamConstraint.video) {
                         this.mediaStreamTrackVideo = this.mediaStream.getVideoTracks()[0];
