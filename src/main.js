@@ -1,3 +1,4 @@
+import { AudioVisualizer } from "./utils/AudioVisualizer.js";
 import { Device } from "./utils/Device.js";
 import { Page } from "./utils/Page.js";
 import { Recorder } from "./utils/Recorder.js";
@@ -38,17 +39,20 @@ async function init() {
             page.displayVideoDeviceUnavailable();
         }
         
+        let audioVisualizer = new AudioVisualizer();
 
-        recorder = new Recorder(page.traduction.recorder);
+        recorder = new Recorder(page.traduction.recorder, audioVisualizer);
         recorder
         .setDeviceConstraint(mediaStreamConstraint, deviceDetails.audio.deviceId, deviceDetails.video.deviceId)
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
-            // recorder.openRecorder();
+            recorder.openRecorder();
         });
 
         page.updateDeviceToMediaConstraint(recorder.updateDevice());
+
+        // let audioVisualizer = new AudioVisualizer();
 
     } catch (status) {
         page

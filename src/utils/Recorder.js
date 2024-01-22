@@ -1,3 +1,4 @@
+import { AudioVisualizer } from "./AudioVisualizer.js";
 import "./typedefs.js";
 const VIDEO_MIME_TYPE = "video/webm";
 const AUDIO_MIME_TYPE = "audio/webm";
@@ -8,13 +9,20 @@ const GAP = 5;
 /**temps en milliseconde */
 const TIME_SLICE_MEDIA_RECORDER = 1000;
 
+/**
+ * @type {number|null}
+ * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
+ * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques secondes plus l'enregistrement est long.
+ */
+const STOP_RECORDING_TIMEOUT = 1000 * 30
+
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
-    width: {ideal: 1280},//{ min: 854, max: 1280 }, //854
-    height: {ideal: 720},//{ min: 480, max: 720 }, //480
+    width: { ideal: 1280 },//{ min: 854, max: 1280 }, //854
+    height: { ideal: 720 },//{ min: 480, max: 720 }, //480
     // frameRate: { min: 24, ideal: 30 },
     facingMode: "user",
-    aspectRatio: { exact: 16/9},
+    aspectRatio: { exact: 16 / 9 },
     deviceId: undefined,
 };
 /**@type {MediaTrackConstraintSet} */
@@ -52,6 +60,12 @@ export class Recorder {
 
     /**
      * @private
+     * @type {MediaStreamTrack|null}
+     */
+    mediaStreamTrackVideo = null;
+
+    /**
+     * @private
      * @type {Blob[]}
      */
     recordedChunks = [];
@@ -61,6 +75,9 @@ export class Recorder {
 
     /** @private*/
     idInterval = null;
+
+    /** @private*/
+    idRecordingTimeout = null;
 
     /** @private*/
     isRecording = false;
@@ -81,11 +98,18 @@ export class Recorder {
     tradRecorder
 
     /**
-     * @param {ITraductionRecorder} tradRecorder 
+     * @private
+     * @type {AudioVisualizer|null}
      */
-    constructor(tradRecorder) {
+    audioVisualizer = null
 
+    /**
+     * @param {ITraductionRecorder} tradRecorder 
+     * @param {AudioVisualizer} audioVisualizer 
+     */
+    constructor(tradRecorder, audioVisualizer) {
         this.tradRecorder = tradRecorder;
+        this.audioVisualizer = audioVisualizer;
 
         this.element = {
             VIDEO_DEVICE_DISABLED_H3: document.querySelector(".recorder_video_device_disabled"),
@@ -153,7 +177,7 @@ export class Recorder {
             }
 
             //obligé de redemander de lancer un stream pour prendre en compte le changement de périphérique
-            //car il se peut que le navigateur n'ait pas la permission d'utiliser le nouveau périph. choisi.
+            //car il se peut que le navigateur n'ait pas la permission d'utiliser le nouveau périphérique choisi.
             this.startStreamingToPreviewVideo().then(() => {
                 console.info("Changed device");
             })
@@ -172,10 +196,10 @@ export class Recorder {
 
         this.element.START_RECORDING_BUTTON.addEventListener("click", this.startRecording.bind(this));
         window.addEventListener("resize", () => {
-            if(!this.isRecording) return;
+            if (!this.isRecording) return;
             this.translateRecButtonToTheRight();
         });
-        
+
         this.element.TOGGLE_VIDEO_DEVICE_BUTTON.addEventListener("click", this.toggleVideoDevice.bind(this))
 
         this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeVideo.bind(this));
@@ -209,6 +233,19 @@ export class Recorder {
             navigator.mediaDevices.getUserMedia(this.mediaStreamConstraint)
                 .then((stream) => {
                     this.mediaStream = stream;
+
+                    this.audioVisualizer
+                        .setAndConnectSourceMediaStream(this.mediaStream);
+                        
+
+                    if (this.mediaStreamConstraint.video) {
+                        this.mediaStreamTrackVideo = this.mediaStream.getVideoTracks()[0];
+                    } else {
+                        this.audioVisualizer.show();
+                        this.audioVisualizer.start();
+                        this.mediaStream = new MediaStream([this.audioVisualizer.mediaStreamTrack, this.mediaStream.getAudioTracks()[0]])
+                    }
+
                     this.element.PREVIEW_VIDEO.srcObject = this.mediaStream
                     console.info("Started streaming to the preview video.");
                     resolve();
@@ -224,6 +261,9 @@ export class Recorder {
 
         this.element.RECORDER_CONTAINER_DIV.classList.remove("hidden");
         document.body.style.overflowY = "hidden";
+
+        this.audioVisualizer.resizeCanvas();
+
         setTimeout(() => {
             this.isRecorderContainerUp = true;
             this.element.RECORDER_DIV.classList.remove("animation_enter_recorder");
@@ -238,11 +278,25 @@ export class Recorder {
             window.alert("Didn't get the permission to use the video device or it doesn't exist.");
             return;
         }
-        if (this.mediaStream != null && this.mediaStreamConstraint.video) {
-            this.element.VIDEO_DEVICE_DISABLED_H3.innerText = this.tradRecorder.video.disable;
-            this.element.VIDEO_DEVICE_DISABLED_H3.classList.toggle("hidden");
-            this.mediaStream.getVideoTracks()[0].enabled = !this.mediaStream.getVideoTracks()[0].enabled;
-            this.element.TOGGLE_VIDEO_DEVICE_BUTTON.classList.toggle("disabled_by_user");
+
+        if (this.mediaStream == null) {
+            console.warn("Media stream not set");
+            return;
+        }
+        this.element.VIDEO_DEVICE_DISABLED_H3.innerText = this.tradRecorder.video.disable;
+        this.element.VIDEO_DEVICE_DISABLED_H3.classList.toggle("hidden");
+        this.mediaStreamTrackVideo.enabled = !this.mediaStreamTrackVideo.enabled;
+        this.element.TOGGLE_VIDEO_DEVICE_BUTTON.classList.toggle("disabled_by_user");
+
+        if (this.mediaStreamTrackVideo.enabled) {
+            this.audioVisualizer.hide();
+            this.audioVisualizer.stop();
+            this.mediaStream = new MediaStream([this.mediaStreamTrackVideo, this.mediaStream.getAudioTracks()[0]]);
+            
+        } else {
+            this.audioVisualizer.show();
+            this.audioVisualizer.start();
+            this.mediaStream = new MediaStream([this.audioVisualizer.mediaStreamTrack, this.mediaStream.getAudioTracks()[0]]);
         }
     }
 
@@ -308,6 +362,7 @@ export class Recorder {
      * @private
      */
     pauseRecording() {
+        this.mediaRecorder.pause();
         clearInterval(this.idInterval);
         this.element.PAUSE_RESUME_BUTTON.querySelector(".pause_icon")?.classList.add("hidden");
         this.element.PAUSE_RESUME_BUTTON.querySelector(".resume_icon")?.classList.remove("hidden");
@@ -320,6 +375,7 @@ export class Recorder {
      * @private
      */
     resumeRecording() {
+        this.mediaRecorder.resume();
         this.startInterval();
         this.element.PAUSE_RESUME_BUTTON.querySelector(".pause_icon")?.classList.remove("hidden");
         this.element.PAUSE_RESUME_BUTTON.querySelector(".resume_icon")?.classList.add("hidden");
@@ -344,6 +400,10 @@ export class Recorder {
         this.isRecording = true;
         this.recordedChunks = [];
 
+        if(STOP_RECORDING_TIMEOUT != null){
+            this.startRecordingTimeOut();
+        }
+
         this.animateButtonsIn();
         this.startCounterTimeElapsed();
         this.mediaRecorder = new MediaRecorder(this.mediaStream);
@@ -351,6 +411,16 @@ export class Recorder {
         this.initEventListenersOnMediaRecorder();
         this.mediaRecorder.start(TIME_SLICE_MEDIA_RECORDER);
         console.info("started the recording");
+    }
+
+    /**
+     * @private 
+     * Arrêtera automatiquement l'enregistrement après le TIMEOUT
+     */
+    startRecordingTimeOut(){
+        this.idRecordingTimeout = setTimeout(() => {
+            this.stopRecording(false);
+        }, STOP_RECORDING_TIMEOUT);
     }
 
     /**
@@ -389,9 +459,10 @@ export class Recorder {
         this.isRecording = false;
         this.mediaRecorder?.stop();
         clearInterval(this.idInterval);
+        clearTimeout(this.idRecordingTimeout);
         await this.animateButtonsOut();
 
-        if(this.isPaused){
+        if (this.isPaused) {
             this.element.PAUSE_RESUME_BUTTON.querySelector(".pause_icon")?.classList.remove("hidden");
             this.element.PAUSE_RESUME_BUTTON.querySelector(".resume_icon")?.classList.add("hidden");
             this.element.PAUSE_RESUME_BUTTON.title = this.tradRecorder.video.button.pause;
@@ -416,6 +487,7 @@ export class Recorder {
      */
     animateButtonsIn() {
         this.element.START_RECORDING_BUTTON.classList.add("active");
+        this.element.START_RECORDING_BUTTON.querySelector(".popup").classList.add("hidden");
         this.translateRecButtonToTheRight();
 
         this.element.START_RECORDING_BUTTON.addEventListener("transitionend", () => {
@@ -425,7 +497,7 @@ export class Recorder {
     }
 
     /**@private */
-    translateRecButtonToTheRight(){
+    translateRecButtonToTheRight() {
         let offsetLeft = this.element.START_RECORDING_BUTTON.offsetLeft - GAP * 13;
         this.element.START_RECORDING_BUTTON.style.transform = `translateX(${offsetLeft}px)`;
     }

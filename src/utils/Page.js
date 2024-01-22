@@ -174,9 +174,12 @@ export class Page {
                 <div class="video_container">
                     <h3 class="recorder_video_device_disabled hidden">${this.traduction.recorder.video.unavailable}</h3>
                     <video id="preview_video" autoplay muted></video>
+                    <canvas class="audio_visualizer" hidden=""></canvas>
+
                     <div class="recorder_buttons_container">
-                    
+
                         <button title="${this.traduction.recorder.video.button.start}" class="recorder_rec_button" id="start_recording_button">
+                            <div class="popup">Commencer votre enregistrement<div class="pointer"></div></div>
                             <span class="title">REC</span>
                             <span class="circle"></span>
                             <span class="time_elapsed"></span>
@@ -203,6 +206,8 @@ export class Page {
                         </div>
 
                     </div>
+
+
                 </div>
             </div>
         </div>
