@@ -176,6 +176,10 @@ export class Recorder {
                 this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
             }
 
+            if(this.mediaStreamConstraint.video){
+                this.toggleVideoDevice();
+            }
+
             //obligé de redemander de lancer un stream pour prendre en compte le changement de périphérique
             //car il se peut que le navigateur n'ait pas la permission d'utiliser le nouveau périphérique choisi.
             this.startStreamingToPreviewVideo().then(() => {
