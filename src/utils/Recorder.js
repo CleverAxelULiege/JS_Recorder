@@ -195,7 +195,7 @@ export class Recorder {
             }
 
             //TODO DETECT WHEN VIDEO DEVICE IS DISABLED
-            if (this.mediaStreamConstraint.video) {
+            if (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled) {
                 this.toggleVideoDevice();
             }
 
