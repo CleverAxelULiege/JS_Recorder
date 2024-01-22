@@ -43,21 +43,6 @@ export class AudioVisualizer {
 
 
     constructor() {
-        // /**@private */
-        // this.audioCtx = null;
-
-        // this.mediaStreamTrack = null;
-
-        // /**@private */
-        // this.analyser = null;
-        // this.analyser.fftSize = 2048;
-
-        // /**@private */
-        // this.bufferLength = null;
-
-        // /**@private */
-        // this.dataArray = null;
-
         /**@private */
         this.canvasCtx = this.canvas.getContext("2d");
 
@@ -92,6 +77,7 @@ export class AudioVisualizer {
         return this;
     }
 
+    /**@private */
     resizeCanvas() {
         this.canvas.width = this.canvas.parentElement.getBoundingClientRect().width;
         this.canvas.height = this.canvas.parentElement.getBoundingClientRect().height;
@@ -104,10 +90,12 @@ export class AudioVisualizer {
 
     hide() {
         this.canvasCtx.canvas.hidden = true;
+        return this;
     }
     
     show() {
         this.canvasCtx.canvas.hidden = false;
+        return this;
     }
 
     start() {
@@ -118,6 +106,15 @@ export class AudioVisualizer {
 
         this.isActive = true;
         this.enableRequestFrame(0);
+        return this;
+    }
+
+    stop() {
+        cancelAnimationFrame(this.idRequestFrame);
+        this.isActive = false;
+        this.idRequestFrame = null;
+        this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        return this;
     }
 
 
@@ -161,19 +158,5 @@ export class AudioVisualizer {
         }
         // canvasCtx.lineTo(CANVAS.width, CANVAS.height / 2);
         this.canvasCtx.stroke();
-    }
-
-    /**
-     * @param {number} frameRequestRate 
-     */
-    getCaptureStream(frameRequestRate = undefined) {
-        return this.canvas.captureStream(frameRequestRate);
-    }
-
-    stop() {
-        cancelAnimationFrame(this.idRequestFrame);
-        this.isActive = false;
-        this.idRequestFrame = null;
-        this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }

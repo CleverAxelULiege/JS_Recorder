@@ -243,8 +243,10 @@ export class Recorder {
                     if (this.mediaStreamConstraint.video) {
                         this.mediaStreamTrackVideo = this.mediaStream.getVideoTracks()[0];
                     } else {
-                        this.audioVisualizer.show();
-                        this.audioVisualizer.start();
+                        this.audioVisualizer
+                        .show()
+                        .start();
+
                         this.mediaStream = new MediaStream([this.audioVisualizer.mediaStreamTrack, this.mediaStream.getAudioTracks()[0]])
                     }
 
@@ -291,13 +293,15 @@ export class Recorder {
         this.element.TOGGLE_VIDEO_DEVICE_BUTTON.classList.toggle("disabled_by_user");
 
         if (this.mediaStreamTrackVideo.enabled) {
-            this.audioVisualizer.hide();
-            this.audioVisualizer.stop();
+            this.audioVisualizer
+            .hide()
+            .stop();
             this.mediaStream = new MediaStream([this.mediaStreamTrackVideo, this.mediaStream.getAudioTracks()[0]]);
             
         } else {
-            this.audioVisualizer.show();
-            this.audioVisualizer.start();
+            this.audioVisualizer
+            .show()
+            .start();
             this.mediaStream = new MediaStream([this.audioVisualizer.mediaStreamTrack, this.mediaStream.getAudioTracks()[0]]);
         }
     }
