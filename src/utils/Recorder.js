@@ -175,6 +175,7 @@ export class Recorder {
             if(!this.isRecording) return;
             this.translateRecButtonToTheRight();
         });
+        
         this.element.TOGGLE_VIDEO_DEVICE_BUTTON.addEventListener("click", this.toggleVideoDevice.bind(this))
 
         this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeVideo.bind(this));
