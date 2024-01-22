@@ -176,6 +176,7 @@ export class Recorder {
                 this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
             }
 
+            //TODO DETECT WHEN VIDEO DEVICE IS DISABLED
             if(this.mediaStreamConstraint.video){
                 this.toggleVideoDevice();
             }
@@ -196,7 +197,7 @@ export class Recorder {
 
         this.element.OPEN_RECORDER_BUTTON.addEventListener("click", this.openRecorder.bind(this));
         this.element.CLOSE_RECORDER_BUTTON.addEventListener("click", this.closeRecorder.bind(this));
-        window.addEventListener("click", this.closerecorderIfClickOutsideOfIt.bind(this));
+        window.addEventListener("click", this.closeRecorderIfClickOutsideOfIt.bind(this));
 
         this.element.START_RECORDING_BUTTON.addEventListener("click", this.startRecording.bind(this));
         window.addEventListener("resize", () => {
@@ -206,7 +207,7 @@ export class Recorder {
 
         this.element.TOGGLE_VIDEO_DEVICE_BUTTON.addEventListener("click", this.toggleVideoDevice.bind(this))
 
-        this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeVideo.bind(this));
+        this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeRecording.bind(this));
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", () => this.stopRecording(false));
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
@@ -334,7 +335,7 @@ export class Recorder {
      * @private
      * @param {Event} e 
      */
-    closerecorderIfClickOutsideOfIt(e) {
+    closeRecorderIfClickOutsideOfIt(e) {
         if (!this.isRecorderContainerUp) {
             return;
         }
@@ -349,7 +350,7 @@ export class Recorder {
     /**
      * @private
      */
-    pauseOrResumeVideo() {
+    pauseOrResumeRecording() {
         if (!this.isRecording) {
             console.warn("No recording started or no recorder set.")
             return;
