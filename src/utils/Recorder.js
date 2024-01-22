@@ -14,7 +14,12 @@ const TIME_SLICE_MEDIA_RECORDER = 1000;
  * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
  * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques secondes plus l'enregistrement est long.
  */
-const STOP_RECORDING_TIMEOUT = 1000 * 30
+const STOP_RECORDING_TIMEOUT = 1000 * 10
+
+/**
+ * Temps en millisecondes que le pop up s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
+ */
+const POPUP_TIMEOUT_UP_TIME = 12000;
 
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
@@ -80,6 +85,9 @@ export class Recorder {
     idRecordingTimeout = null;
 
     /** @private*/
+    idPopupTimeout = null;
+
+    /** @private*/
     isRecording = false;
 
     /**@private */
@@ -130,6 +138,7 @@ export class Recorder {
             PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".video_container"),
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
             LOADER_CONTAINER_DIV: document.querySelector(".loader_container"),
+            POPUP_TIMEOUT_BUTTON: document.querySelector(".popup_timeout"),
         };
     }
 
@@ -151,6 +160,7 @@ export class Recorder {
             this.mediaStreamConstraint.video.deviceId = videoDeviceId;
         } else {
             this.element.TOGGLE_VIDEO_DEVICE_BUTTON.disabled = true;
+            this.element.TOGGLE_VIDEO_DEVICE_BUTTON.ariaHidden = "true";
             //pas de périphérique vidéo donc je désactive le bouton
         }
 
@@ -177,7 +187,7 @@ export class Recorder {
             }
 
             //TODO DETECT WHEN VIDEO DEVICE IS DISABLED
-            if(this.mediaStreamConstraint.video){
+            if (this.mediaStreamConstraint.video) {
                 this.toggleVideoDevice();
             }
 
@@ -211,6 +221,7 @@ export class Recorder {
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", () => this.stopRecording(false));
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
+        this.element.POPUP_TIMEOUT_BUTTON.addEventListener("click", this.closePopupTimeout.bind(this));
 
         return this;
     }
@@ -238,15 +249,15 @@ export class Recorder {
             navigator.mediaDevices.getUserMedia(this.mediaStreamConstraint)
                 .then((stream) => {
                     this.mediaStream = stream;
-                    
+
                     this.audioVisualizer.init(this.mediaStream);
 
                     if (this.mediaStreamConstraint.video) {
                         this.mediaStreamTrackVideo = this.mediaStream.getVideoTracks()[0];
                     } else {
                         this.audioVisualizer
-                        .show()
-                        .start();
+                            .show()
+                            .start();
 
                         this.mediaStream = new MediaStream([this.audioVisualizer.mediaStreamTrack, this.mediaStream.getAudioTracks()[0]])
                     }
@@ -295,14 +306,14 @@ export class Recorder {
 
         if (this.mediaStreamTrackVideo.enabled) {
             this.audioVisualizer
-            .hide()
-            .stop();
+                .hide()
+                .stop();
             this.mediaStream = new MediaStream([this.mediaStreamTrackVideo, this.mediaStream.getAudioTracks()[0]]);
-            
+
         } else {
             this.audioVisualizer
-            .show()
-            .start();
+                .show()
+                .start();
             this.mediaStream = new MediaStream([this.audioVisualizer.mediaStreamTrack, this.mediaStream.getAudioTracks()[0]]);
         }
     }
@@ -404,16 +415,17 @@ export class Recorder {
             return;
         }
 
-        if(this.element.RECORDED_ELEMENT.src != ""){
-            if(!window.confirm(this.tradRecorder.overwritePreviousRecording)){
+        if (this.element.RECORDED_ELEMENT.src != "") {
+            if (!window.confirm(this.tradRecorder.overwritePreviousRecording)) {
                 return;
             }
         }
 
+        this.closePopupTimeout();
         this.isRecording = true;
         this.recordedChunks = [];
 
-        if(STOP_RECORDING_TIMEOUT != null){
+        if (STOP_RECORDING_TIMEOUT != null) {
             this.startRecordingTimeOut();
         }
 
@@ -428,12 +440,35 @@ export class Recorder {
 
     /**
      * @private 
-     * Arrêtera automatiquement l'enregistrement après le TIMEOUT
+     * Arrêtera automatiquement l'enregistrement après le TIMEOUT et affichera un POPUP
      */
-    startRecordingTimeOut(){
+    startRecordingTimeOut() {
         this.idRecordingTimeout = setTimeout(() => {
             this.stopRecording(false);
+            this.element.POPUP_TIMEOUT_BUTTON.classList.add("enter_in");
+            this.element.POPUP_TIMEOUT_BUTTON.ariaHidden = "false";
+
+            let secondTimeOut = STOP_RECORDING_TIMEOUT / 1000;
+            let minute = Math.floor(secondTimeOut / 60);
+            let second = secondTimeOut % 60;
+
+            let minuteFormat = minute < 10 ? `0${minute}` : minute;
+            let secondFormat = second < 10 ? `0${second}` : second;
+
+            this.element.POPUP_TIMEOUT_BUTTON.querySelector(".timeout_duration").innerText = `${minuteFormat}:${secondFormat}`;
+
+            this.idPopupTimeout = setTimeout(() => {
+                this.closePopupTimeout();
+            }, POPUP_TIMEOUT_UP_TIME);
+
         }, STOP_RECORDING_TIMEOUT);
+    }
+
+    /**@private */
+    closePopupTimeout() {
+        this.element.POPUP_TIMEOUT_BUTTON.ariaHidden = "true";
+        clearTimeout(this.idPopupTimeout);
+        this.element.POPUP_TIMEOUT_BUTTON.classList.remove("enter_in");
     }
 
     /**
@@ -500,11 +535,12 @@ export class Recorder {
      */
     animateButtonsIn() {
         this.element.START_RECORDING_BUTTON.classList.add("active");
-        this.element.START_RECORDING_BUTTON.querySelector(".popup").classList.add("hidden");
+        this.element.START_RECORDING_BUTTON.querySelector(".popup_start_recording").classList.add("hidden");
         this.translateRecButtonToTheRight();
 
         this.element.START_RECORDING_BUTTON.addEventListener("transitionend", () => {
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.classList.remove("off_screen");
+            this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.ariaHidden = "false";
             this.element.START_RECORDING_BUTTON.style.transition = "none";
         }, { once: true });
     }
@@ -522,6 +558,7 @@ export class Recorder {
     animateButtonsOut() {
         return new Promise((resolve) => {
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.classList.add("off_screen");
+            this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.ariaHidden = "true";
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.addEventListener("transitionend", () => {
                 this.element.START_RECORDING_BUTTON.classList.remove("active");
                 this.element.START_RECORDING_BUTTON.style.transform = "";

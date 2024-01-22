@@ -37,6 +37,7 @@
  * @property {HTMLDivElement} LOADER_CONTAINER_DIV
  * @property {HTMLDivElement} LOADER_CONTAINER_DIV
  * @property {HTMLDivElement} RECORDED_ELEMENT_CONTAINER_DIV
+ * @property {HTMLDivElement} POPUP_TIMEOUT_BUTTON
  */
 //#endregion
 

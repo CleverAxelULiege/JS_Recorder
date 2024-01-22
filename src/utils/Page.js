@@ -172,6 +172,9 @@ export class Page {
                     </button>
                 </div>
                 <div class="video_container">
+                    <div class="popup_timeout" aria-hidden="true" role="button">
+                        <span>Temps écoulé ! L'enregistrement ne peut pas durer plus de : <i class="timeout_duration"></i></span>
+                    </div>
                     <h3 class="recorder_video_device_disabled hidden">${this.traduction.recorder.video.unavailable}</h3>
                     <video id="preview_video" autoplay muted></video>
                     <canvas class="audio_visualizer" hidden=""></canvas>
@@ -179,7 +182,7 @@ export class Page {
                     <div class="recorder_buttons_container">
 
                         <button title="${this.traduction.recorder.video.button.start}" class="recorder_rec_button" id="start_recording_button">
-                            <div class="popup">${this.traduction.recorder.popUpStartRecording}</div>
+                            <div class="popup_start_recording"><span>${this.traduction.recorder.popUpStartRecording}</span></div>
                             <span class="title">REC</span>
                             <span class="circle"></span>
                             <span class="time_elapsed"></span>
@@ -195,7 +198,7 @@ export class Page {
                             </button>
                         </div>
 
-                        <div class="recorder_action_buttons_container off_screen">
+                        <div class="recorder_action_buttons_container off_screen" aria-hidden="true">
                             <button title="${this.traduction.recorder.video.button.stop}" class="recorder_stop_rec_button" id="stop_recording_button">
                                 <span class="square"></span>
                             </button>
