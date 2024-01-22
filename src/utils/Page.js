@@ -4,7 +4,7 @@ export class Page {
     /**@private @type {string}*/
     documentLng;
 
-    /**@private @type {ITraduction} */
+    /**@type {ITraduction} */
     traduction;
 
     /**@type {IDOMElement} */

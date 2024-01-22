@@ -44,12 +44,20 @@
 //#region TRADUCTION
 /**
  * @typedef ITraduction
+ * @property {ITraductionTime} time
  * @property {{audio:string, video:string}} device
  * @property {ITraductionRecorder} recorder
  * @property {ITraductionRecorded} recorded
  * @property {{
  *  device:ITraductionErrorDevice
  * }} errorMessages
+ */
+
+/**
+ * @typedef ITraductionTime
+ * @property {string} minute
+ * @property {string} second
+ * @property {string} separator
  */
 
 /**
@@ -72,6 +80,7 @@
  * @property {string} overwritePreviousRecording
  * @property {string} leaveWhileRecording
  * @property {string} popUpStartRecording
+ * @property {string} popUpTimeoutRecording
  * @property {{
         * disable:string,
         * unavailable:string,

@@ -7,17 +7,17 @@ const AUDIO_MIME_TYPE = "audio/webm";
 const GAP = 5;
 
 /**temps en milliseconde */
-const TIME_SLICE_MEDIA_RECORDER = 1000;
+const TIME_SLICE_MEDIA_RECORDER = 500;
 
 /**
  * @type {number|null}
  * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
  * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques secondes plus l'enregistrement est long.
  */
-const STOP_RECORDING_TIMEOUT = 1000 * 10
+const STOP_RECORDING_TIMEOUT = 1000 * 60
 
 /**
- * Temps en millisecondes que le pop up s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
+ * Temps en millisecondes où le pop up s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
  */
 const POPUP_TIMEOUT_UP_TIME = 12000;
 
@@ -107,16 +107,24 @@ export class Recorder {
 
     /**
      * @private
+     * @type {ITraductionTime}
+     */
+    tradRecorder
+
+    /**
+     * @private
      * @type {AudioVisualizer|null}
      */
     audioVisualizer = null
 
     /**
-     * @param {ITraductionRecorder} tradRecorder 
+     * @param {ITraductionRecorder} tradRecorder
+     * @param {ITraductionTime} tradTime
      * @param {AudioVisualizer} audioVisualizer 
      */
-    constructor(tradRecorder, audioVisualizer) {
+    constructor(tradRecorder, tradTime, audioVisualizer) {
         this.tradRecorder = tradRecorder;
+        this.tradTime = tradTime;
         this.audioVisualizer = audioVisualizer;
 
         this.element = {
@@ -452,10 +460,16 @@ export class Recorder {
             let minute = Math.floor(secondTimeOut / 60);
             let second = secondTimeOut % 60;
 
-            let minuteFormat = minute < 10 ? `0${minute}` : minute;
-            let secondFormat = second < 10 ? `0${second}` : second;
+            let timeOutMsg = this.tradRecorder.popUpTimeoutRecording + " : ";
+            if(minute > 0){
+                timeOutMsg += ` ${minute} ${this.tradTime.minute}${minute > 1 ? "s" : ""}`;
+            }
+            
+            if(second > 0){
+                timeOutMsg += `${minute > 0 ? " " + this.tradTime.separator : ""} ${second} ${this.tradTime.second}${second > 1 ? "s" : ""}`;
+            }
 
-            this.element.POPUP_TIMEOUT_BUTTON.querySelector(".timeout_duration").innerText = `${minuteFormat}:${secondFormat}`;
+            this.element.POPUP_TIMEOUT_BUTTON.querySelector("span").innerText = `${timeOutMsg}`;
 
             this.idPopupTimeout = setTimeout(() => {
                 this.closePopupTimeout();
