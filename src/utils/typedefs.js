@@ -14,6 +14,7 @@
  * @property {HTMLSelectElement} VIDEO_DEVICE_SELECT
  * @property {HTMLSelectElement} AUDIO_DEVICE_SELECT
  * @property {HTMLDivElement} ERROR_BOX_DEVICE_DIV
+ * @property {HTMLDivElement} LOADER_CONTAINER_DIV
  */
 
 /**

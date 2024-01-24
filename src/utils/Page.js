@@ -15,6 +15,7 @@ export class Page {
         VIDEO_DEVICE_SELECT: null,
         RECORD_FROM_SITE_DIV: null,
         ERROR_BOX_DEVICE_DIV: null,
+        LOADER_CONTAINER_DIV: null
     }
 
     /**
@@ -31,6 +32,7 @@ export class Page {
         this.element.VIDEO_DEVICE_SELECT = document.querySelector("#video_device_select");
         this.element.MAIN = document.querySelector("main");
         this.element.ERROR_BOX_DEVICE_DIV = document.querySelector(".error_box");
+        this.element.LOADER_CONTAINER_DIV = document.querySelector("main>.loader_container");
     }
 
     async fetchTraductionAndBuildPage(){
@@ -91,6 +93,10 @@ export class Page {
     displayPossibilityToRecord(){
         this.element.ERROR_BOX_DEVICE_DIV.classList.add("hidden");
         this.element.RECORD_FROM_SITE_DIV?.classList.remove("hidden");
+    }
+
+    removeLoader(){
+        this.element.MAIN.removeChild(this.element.LOADER_CONTAINER_DIV);
     }
 
     /**
@@ -216,9 +222,9 @@ export class Page {
         </div>
 
 
-        <main>
+        
             <div class="error_box"></div>
-            <div id="permission_to_record_from_site" class="hidden">
+            <div id="permission_to_record_from_site" class="permission_to_record_from_site hidden">
                 <h2>${this.traduction.recorder.main}</h2>
 
                 <div class="button_container">
@@ -264,7 +270,7 @@ export class Page {
                 </div>
             </div>
             
-        </main>
+        
         `;
     }
 }

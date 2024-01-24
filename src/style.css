@@ -62,20 +62,62 @@ select {
 }
 
 main {
-    padding: 5px;
     flex-grow: 1;
 }
 
-main>div.error_box {
+main>.loader_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+main>.loader_container h2{
+    padding: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+    font-family: var(--second_font);
+    text-align: center;
+}
+
+main>.loader_container .loader {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    border: 5px solid #000000;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#root>div.error_box {
     color: var(--red);
     padding: 0;
 }
 
-main>div.error_box p {
+#root>div.error_box p {
     padding: 5px;
 }
 
-main>div{
+#root>div.recorded_element_container,
+#root>div.permission_to_record_from_site {
     max-width: 900px;
     margin: 0 auto;
     border-radius: 10px;
@@ -85,7 +127,7 @@ main>div{
     box-shadow: 0px 5px 7px -6px #000000;
 }
 
-main h2 {
+#root h2 {
     font-family: var(--second_font);
     font-size: 20px;
     text-align: center;
@@ -483,10 +525,10 @@ h3.recorder_video_device_disabled {
     -moz-user-select: none;
 }
 
-.recorded_element_container {
-    max-width: 900px;
+
+/***************RECORDED SECTION************************/
+#root>div.recorded_element_container {
     margin: 10px auto 0 auto;
-    padding: 10px;
 }
 
 .recorded_element_container .video_container {
@@ -504,7 +546,7 @@ h3.recorder_video_device_disabled {
     background-color: black;
 }
 
-.recorded_element_container h2 {
+#root>div.recorded_element_container h2 {
     text-align: left;
 }
 

@@ -56,5 +56,7 @@ async function init() {
         page
         .displayErrorsFromDevice(status, page.traduction.errorMessages.device)
         .removePossibilityToRecord();
+    } finally{
+        page.removeLoader();
     }
 }
