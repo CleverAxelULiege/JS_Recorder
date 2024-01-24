@@ -128,25 +128,25 @@ export class Recorder {
         this.audioVisualizer = audioVisualizer;
 
         this.element = {
-            VIDEO_DEVICE_DISABLED_H3: document.querySelector(".recorder_video_device_disabled"),
+            VIDEO_DEVICE_DISABLED_H3: document.querySelector(".recorder .recorder_video_device_disabled"),
             RECORDER_CONTAINER_DIV: document.querySelector(".recorder_container"),
             RECORDER_DIV: document.querySelector(".recorder"),
-            CLOSE_RECORDER_BUTTON: document.querySelector(".close_recorder_button"),
+            CLOSE_RECORDER_BUTTON: document.querySelector(".recorder .close_recorder_button"),
             OPEN_RECORDER_BUTTON: document.querySelector("#display_recorder_button"),
-            START_RECORDING_BUTTON: document.querySelector("#start_recording_button"),
-            STOP_RECORDING_BUTTON: document.querySelector("#stop_recording_button"),
-            RECORDER_ACTION_BUTTONS_CONTAINER_DIV: document.querySelector(".recorder_action_buttons_container"),
-            PAUSE_RESUME_BUTTON: document.querySelector("#pause_resume_recording_button"),
-            TOGGLE_VIDEO_DEVICE_BUTTON: document.querySelector("#toggle_video_device_button"),
-            TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder_action_fs_tv_buttons_container"),
-            PREVIEW_VIDEO: document.querySelector("#preview_video"),
-            RECORDED_ELEMENT: document.querySelector("#recorded_video"),
-            TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".time_elapsed"),
+            START_RECORDING_BUTTON: document.querySelector(".recorder #start_recording_button"),
+            STOP_RECORDING_BUTTON: document.querySelector(".recorder #stop_recording_button"),
+            RECORDER_ACTION_BUTTONS_CONTAINER_DIV: document.querySelector(".recorder .recorder_action_buttons_container"),
+            PAUSE_RESUME_BUTTON: document.querySelector(".recorder #pause_resume_recording_button"),
+            TOGGLE_VIDEO_DEVICE_BUTTON: document.querySelector(".recorder #toggle_video_device_button"),
+            TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder .recorder_action_fs_tv_buttons_container"), //container qui a le bouton pour activer/désactiver la caméra et la requête du plein écran
+            PREVIEW_VIDEO: document.querySelector(".recorder #preview_video"),
+            RECORDED_ELEMENT: document.querySelector(".recorded_element_container #recorded_video"),
+            TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".recorder .time_elapsed"),
             REQUEST_FULL_SCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
-            PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".video_container"),
+            PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".recorder .video_container"),
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
-            LOADER_CONTAINER_DIV: document.querySelector(".loader_container"),
-            POPUP_TIMEOUT_BUTTON: document.querySelector(".popup_timeout"),
+            LOADER_CONTAINER_DIV: document.querySelector(".recorder .loader_container"),
+            POPUP_TIMEOUT_BUTTON: document.querySelector(".recorder .popup_timeout"),
         };
     }
 
@@ -167,8 +167,7 @@ export class Recorder {
             this.mediaStreamConstraint.video = { ...VIDEO_CONSTRAINT };
             this.mediaStreamConstraint.video.deviceId = videoDeviceId;
         } else {
-            this.element.TOGGLE_VIDEO_DEVICE_BUTTON.disabled = true;
-            this.element.TOGGLE_VIDEO_DEVICE_BUTTON.ariaHidden = "true";
+            this.element.TOGGLE_VIDEO_DEVICE_BUTTON.style.display = "none";
             //pas de périphérique vidéo donc je désactive le bouton
         }
 
@@ -500,7 +499,7 @@ export class Recorder {
 
         this.mediaRecorder.onstop = () => {
             console.info("Stopped the recording");
-            let recordedBlob = new Blob(this.recordedChunks, { type: this.mimeType });
+            let recordedBlob = new Blob(this.recordedChunks, { type: this.mimeType + "; codecs=vp8, vorbis" });
 
             URL.revokeObjectURL(this.element.RECORDED_ELEMENT.src);
             this.element.RECORDED_ELEMENT.src = URL.createObjectURL(recordedBlob);

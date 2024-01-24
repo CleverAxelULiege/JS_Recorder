@@ -48,7 +48,7 @@ async function init() {
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
-            recorder.openRecorder();
+            // recorder.openRecorder();
         });
 
         page.updateDeviceToMediaConstraint(recorder.updateDevice());

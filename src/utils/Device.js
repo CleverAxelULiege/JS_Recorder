@@ -43,8 +43,9 @@ export class Device {
     }
 
     checkIfTouchScreen(){
-        return (('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0));
+        return matchMedia('(hover: none)').matches
+        // return (('ontouchstart' in window) ||
+        // (navigator.maxTouchPoints > 0));
     }
 
     /**

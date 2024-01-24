@@ -75,7 +75,7 @@ main>div.error_box p {
     padding: 5px;
 }
 
-main>div {
+main>div{
     max-width: 900px;
     margin: 0 auto;
     border-radius: 10px;
@@ -421,10 +421,6 @@ main h2 {
 
 .recorder_rec_button.active.paused .circle {
     animation: none;
-}
-
-.recorder_toggle_video_button:disabled {
-    display: none;
 }
 
 .recorder_toggle_video_button.disabled_by_user::after {

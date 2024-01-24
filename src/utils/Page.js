@@ -41,7 +41,7 @@ export class Page {
     }
 
     displayVideoDeviceUnavailable(){
-        document.querySelector(".recorder_video_device_disabled").classList.remove("hidden");
+        document.querySelector("h3.recorder_video_device_disabled").classList.remove("hidden");
     }
 
     /**
@@ -89,7 +89,7 @@ export class Page {
     }
 
     displayPossibilityToRecord(){
-
+        this.element.ERROR_BOX_DEVICE_DIV.classList.add("hidden");
         this.element.RECORD_FROM_SITE_DIV?.classList.remove("hidden");
     }
 
