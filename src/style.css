@@ -53,9 +53,12 @@ select {
     background-color: #e9e9ed;
 }
 
-select:hover,
-select:focus {
-    outline: 1px solid var(--light_cyan);
+@media (hover: hover) {
+
+    select:hover,
+    select:focus {
+        outline: 1px solid var(--light_cyan);
+    }
 }
 
 main {
@@ -128,13 +131,15 @@ main h2 {
     transition: all 150ms ease-in-out;
 }
 
-.display_recorder_button:hover {
-    fill: white;
-    background-color: steelblue;
-}
+@media (hover: hover) {
+    .display_recorder_button:hover {
+        fill: white;
+        background-color: steelblue;
+    }
 
-.display_recorder_button:hover::after {
-    background-color: white;
+    .display_recorder_button:hover::after {
+        background-color: white;
+    }
 }
 
 .display_recorder_button .icon_video {
@@ -153,6 +158,7 @@ main h2 {
     border-radius: 50%;
     background-color: var(--red);
 }
+
 /***************************************/
 
 
@@ -191,6 +197,7 @@ main h2 {
     align-items: center;
     gap: 2px;
 }
+
 /****************************/
 
 
@@ -248,7 +255,7 @@ main h2 {
     overflow: hidden;
 }
 
-.recorder .video_container .popup_timeout{
+.recorder .video_container .popup_timeout {
     position: absolute;
     background-color: steelblue;
     color: white;
@@ -266,7 +273,7 @@ main h2 {
 
 }
 
-.recorder .video_container .popup_timeout.enter_in{
+.recorder .video_container .popup_timeout.enter_in {
     animation-name: popUpTimeOut;
     animation-iteration-count: 1;
     animation-duration: 150ms;
@@ -279,7 +286,7 @@ main h2 {
     background-color: black;
 }
 
-.recorder canvas.audio_visualizer{
+.recorder canvas.audio_visualizer {
     position: absolute;
     top: 0;
     left: 0;
@@ -322,13 +329,13 @@ main h2 {
     transition: all 100ms ease-in-out;
 }
 
-.recorder_rec_button{
+.recorder_rec_button {
     position: absolute;
     transform: translateX(-50%);
     left: 50%;
 }
 
-.recorder_rec_button .popup_start_recording{
+.recorder_rec_button .popup_start_recording {
     /* z-index: 100; */
     position: absolute;
     top: -55px;
@@ -344,7 +351,8 @@ main h2 {
     animation-timing-function: ease-in-out;
     animation-direction: alternate;
 }
-.recorder_rec_button .popup_start_recording::after{
+
+.recorder_rec_button .popup_start_recording::after {
     content: "";
     z-index: -1;
     position: absolute;
@@ -432,14 +440,17 @@ main h2 {
     margin: 0 auto;
 }
 
-.recorder_rec_button:hover,
-.recorder_toggle_video_button:hover,
-.recorder_stop_rec_button:hover,
-.recorder_pause_resume_rec_button:hover,
-.recorder_request_fullscreen:hover {
-    background-color: transparent;
-    color: white;
-    fill: white;
+@media (hover: hover) {
+
+    .recorder_rec_button:hover,
+    .recorder_toggle_video_button:hover,
+    .recorder_stop_rec_button:hover,
+    .recorder_pause_resume_rec_button:hover,
+    .recorder_request_fullscreen:hover {
+        background-color: transparent;
+        color: white;
+        fill: white;
+    }
 }
 
 .recorder_stop_rec_button .square {
@@ -449,8 +460,10 @@ main h2 {
     border-radius: 3px;
 }
 
-.recorder_stop_rec_button:hover .square {
-    background-color: white;
+@media (hover: hover) {
+    .recorder_stop_rec_button:hover .square {
+        background-color: white;
+    }
 }
 
 .recorder_rec_button .circle {
@@ -469,6 +482,9 @@ h3.recorder_video_device_disabled {
     transform: translateX(-50%);
     color: white;
     user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 .recorded_element_container {
@@ -518,21 +534,21 @@ footer {
 }
 
 @keyframes floatUpAndDown {
-    from{
+    from {
         transform: translateY(-2px);
     }
 
-    to{
+    to {
         transform: translateY(2px);
     }
 }
 
 @keyframes popUpTimeOut {
-    from{
+    from {
         transform: translateX(-50%) translateY(calc(-100% - 5px));
     }
-    
-    to{
+
+    to {
         transform: translateX(-50%) translateY(0);
         opacity: 1;
     }
