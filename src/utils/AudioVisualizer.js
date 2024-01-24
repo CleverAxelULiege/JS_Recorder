@@ -79,8 +79,8 @@ export class AudioVisualizer {
 
     /**@private */
     resizeCanvas() {
-        this.canvas.width = this.canvas.parentElement.getBoundingClientRect().width;
-        this.canvas.height = this.canvas.parentElement.getBoundingClientRect().height;
+        this.canvas.width = 1280//this.canvas.parentElement.getBoundingClientRect().width;
+        this.canvas.height = 720//this.canvas.parentElement.getBoundingClientRect().height;
     }
 
     /**@private */

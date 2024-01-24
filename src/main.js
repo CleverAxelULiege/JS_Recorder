@@ -16,6 +16,7 @@ let recorder = null;
 export const IS_MOBILE = device.checkIfMobile();
 export const IS_MOBILE_OR_TABLET = device.checkIfMobileOrTablet();
 export const IS_TOUCH_SCREEN = device.checkIfTouchScreen();
+export const SUPPORT_FULLSCREEN = device.supportFullscreen();
 
 init();
 

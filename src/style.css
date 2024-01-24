@@ -77,7 +77,7 @@ main>.loader_container {
     align-items: center;
 }
 
-main>.loader_container h2{
+main>.loader_container h2 {
     padding: 10px;
     max-width: 500px;
     margin: 0 auto;
@@ -553,6 +553,31 @@ h3.recorder_video_device_disabled {
 
 footer {
     margin-top: auto;
+}
+
+
+@media screen and (max-width: 800px) {
+    .recorder_container {
+        padding: 0px;
+    }
+
+    .recorder {
+        padding: 5px 0;
+        border-radius: 0;
+    }
+
+    .recorder .video_container {
+        border-radius: 0;
+        overflow: hidden;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    h3.recorder_video_device_disabled {
+        width: 100%;
+        font-size: 14px;
+        padding: 0 5px;
+    }
 }
 
 

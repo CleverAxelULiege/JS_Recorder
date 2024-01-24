@@ -1,6 +1,6 @@
 {
     "loader":{
-        "start" : "Veuillez patienter un instant, nous sommes en train d'initialiser l'enregistreur ainsi que vous demander les permissions d'utiliser vos périphériques disponibles"
+        "start" : "Veuillez patienter un instant, nous sommes en train d'initialiser l'enregistreur ainsi que vous demander les permissions d'utiliser vos périphériques disponibles si ne nous les avons pas encore"
     },
     "time":{
         "minute" : "minute",
