@@ -9,13 +9,14 @@ export class Page {
 
     /**@type {IDOMElement} */
     element = {
-        MAIN:null,
+        MAIN: null,
         SELECTABLE_DEVICES_CONTAINER_DIV: null,
-        AUDIO_DEVICE_SELECT : null,
+        AUDIO_DEVICE_SELECT: null,
         VIDEO_DEVICE_SELECT: null,
         RECORD_FROM_SITE_DIV: null,
         ERROR_BOX_DEVICE_DIV: null,
-        LOADER_CONTAINER_DIV: null
+        LOADER_CONTAINER_DIV: null,
+        ROOT_DIV: null
     }
 
     /**
@@ -25,31 +26,34 @@ export class Page {
         this.documentLng = documentLng;
     }
 
-    retrieveDOMElements(){
+    retrieveDOMElements() {
         this.element.SELECTABLE_DEVICES_CONTAINER_DIV = document.querySelector(".devices");
         this.element.RECORD_FROM_SITE_DIV = document.querySelector("#permission_to_record_from_site");
         this.element.AUDIO_DEVICE_SELECT = document.querySelector("#audio_device_select");
         this.element.VIDEO_DEVICE_SELECT = document.querySelector("#video_device_select");
         this.element.MAIN = document.querySelector("main");
+        this.element.ROOT_DIV = document.querySelector("#root");
         this.element.ERROR_BOX_DEVICE_DIV = document.querySelector(".error_box");
         this.element.LOADER_CONTAINER_DIV = document.querySelector("main>.loader_container");
+
+        this.element.LOADER_CONTAINER_DIV.querySelector("h2").innerText = this.traduction.loader.start;
     }
 
-    async fetchTraductionAndBuildPage(){
+    async fetchTraductionAndBuildPage() {
         await this.fetchTraduction();
         this.buildPage();
 
         return this;
     }
 
-    displayVideoDeviceUnavailable(){
+    displayVideoDeviceUnavailable() {
         document.querySelector("h3.recorder_video_device_disabled").classList.remove("hidden");
     }
 
     /**
      * @param {(audioDeviceId:string|null, videoDeviceId:string|null) => void} update 
      */
-    updateDeviceToMediaConstraint(update){
+    updateDeviceToMediaConstraint(update) {
         this.element.AUDIO_DEVICE_SELECT.addEventListener("change", (e) => {
             update(e.target.value, null);
         });
@@ -64,7 +68,8 @@ export class Page {
      * @param {any} deviceStatus 
      * @param {ITraductionErrorDevice} traduction 
      */
-    displayErrorsFromDevice(deviceStatus, traduction){
+    displayErrorsFromDevice(deviceStatus, traduction) {
+        this.element.ERROR_BOX_DEVICE_DIV.classList.remove("hidden");
         switch (deviceStatus) {
             case DEVICE_STATUS.unavailableAudioDeviceVideoDevice:
                 this.element.ERROR_BOX_DEVICE_DIV.innerHTML = `<p>${traduction.unavailableAudioDeviceVideoDevice} ${traduction.default}</p>`;
@@ -76,7 +81,7 @@ export class Page {
                 this.element.ERROR_BOX_DEVICE_DIV.innerHTML = `<p>${traduction.unavailablePermissionToUseAudioDeviceWithVideoDevice} ${traduction.default}</p>`;
                 break;
             default:
-                if(deviceStatus != DEVICE_STATUS.ok){
+                if (deviceStatus != DEVICE_STATUS.ok) {
                     console.log(deviceStatus);
                     this.element.ERROR_BOX_DEVICE_DIV.innerHTML = `<p>${traduction.unknownError}</p>`;
                 }
@@ -86,16 +91,16 @@ export class Page {
         return this;
     }
 
-    removePossibilityToRecord(){
-        this.element.MAIN.removeChild(this.element.RECORD_FROM_SITE_DIV);
+    removePossibilityToRecord() {
+        this.element.ROOT_DIV.removeChild(this.element.RECORD_FROM_SITE_DIV);
     }
 
-    displayPossibilityToRecord(){
+    displayPossibilityToRecord() {
         this.element.ERROR_BOX_DEVICE_DIV.classList.add("hidden");
         this.element.RECORD_FROM_SITE_DIV?.classList.remove("hidden");
     }
 
-    removeLoader(){
+    removeLoader() {
         this.element.MAIN.removeChild(this.element.LOADER_CONTAINER_DIV);
     }
 
@@ -105,24 +110,24 @@ export class Page {
      * @param {string|undefined} videoDeviceId 
      * @param {mediaStreamConstraint} mediaStreamConstraint 
      */
-    enumerateDevicesInSelect(audioDeviceId, videoDeviceId, mediaStreamConstraint){
+    enumerateDevicesInSelect(audioDeviceId, videoDeviceId, mediaStreamConstraint) {
         navigator.mediaDevices.enumerateDevices()
-        .then((devices) => {            
-            devices.forEach((device) => {
-                switch (device.kind) {
-                    case "videoinput":
-                        if (mediaStreamConstraint.video) {
-                            this.element.VIDEO_DEVICE_SELECT.appendChild(this.createOptionDevice(device, device.deviceId == videoDeviceId));
-                        }
-                        break;
-                    case "audioinput":
-                        if (mediaStreamConstraint.audio) {
-                            this.element.AUDIO_DEVICE_SELECT.appendChild(this.createOptionDevice(device, device.deviceId == audioDeviceId));
-                        }
-                        break;
-                }
+            .then((devices) => {
+                devices.forEach((device) => {
+                    switch (device.kind) {
+                        case "videoinput":
+                            if (mediaStreamConstraint.video) {
+                                this.element.VIDEO_DEVICE_SELECT.appendChild(this.createOptionDevice(device, device.deviceId == videoDeviceId));
+                            }
+                            break;
+                        case "audioinput":
+                            if (mediaStreamConstraint.audio) {
+                                this.element.AUDIO_DEVICE_SELECT.appendChild(this.createOptionDevice(device, device.deviceId == audioDeviceId));
+                            }
+                            break;
+                    }
+                });
             });
-        });
 
         return this;
     }
@@ -133,7 +138,7 @@ export class Page {
      * @param {boolean} selected 
      * @returns 
      */
-    createOptionDevice(mediaDeviceInfo, selected){
+    createOptionDevice(mediaDeviceInfo, selected) {
         let option = document.createElement("option");
         option.textContent = mediaDeviceInfo.label;
         option.value = mediaDeviceInfo.deviceId;
@@ -145,12 +150,12 @@ export class Page {
      * @param {MediaStreamConstraints} deviceConstraint 
      * @returns 
      */
-    removeUnavailableDeviceFromSelectableDevice(deviceConstraint){
+    removeUnavailableDeviceFromSelectableDevice(deviceConstraint) {
         if (!deviceConstraint.audio) {
             this.element.SELECTABLE_DEVICES_CONTAINER_DIV.removeChild(document.querySelector(".device_container.audio_device"));
         }
-    
-        if (!deviceConstraint.video) {            
+
+        if (!deviceConstraint.video) {
             this.element.SELECTABLE_DEVICES_CONTAINER_DIV.removeChild(document.querySelector(".device_container.video_device"));
         }
 
@@ -223,7 +228,7 @@ export class Page {
 
 
         
-            <div class="error_box"></div>
+            <div class="error_box hidden"></div>
             <div id="permission_to_record_from_site" class="permission_to_record_from_site hidden">
                 <h2>${this.traduction.recorder.main}</h2>
 

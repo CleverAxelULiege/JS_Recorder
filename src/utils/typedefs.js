@@ -10,6 +10,7 @@
  * @typedef IDOMElement
  * @property {HTMLDivElement}  SELECTABLE_DEVICES_CONTAINER_DIV
  * @property {HTMLElement} MAIN
+ * @property {HTMLDivElement} ROOT_DIV
  * @property {HTMLDivElement} RECORD_FROM_SITE_DIV
  * @property {HTMLSelectElement} VIDEO_DEVICE_SELECT
  * @property {HTMLSelectElement} AUDIO_DEVICE_SELECT
@@ -45,6 +46,7 @@
 //#region TRADUCTION
 /**
  * @typedef ITraduction
+ * @property {ITraductionLoader} loader
  * @property {ITraductionTime} time
  * @property {{audio:string, video:string}} device
  * @property {ITraductionRecorder} recorder
@@ -73,6 +75,11 @@
 /**
  * @typedef ITraductionRecorded
  * @property {string} main
+ */
+
+/**
+ * @typedef ITraductionLoader
+ * @property {string} start
  */
 
 /**

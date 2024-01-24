@@ -117,7 +117,8 @@ main>.loader_container .loader {
 }
 
 #root>div.recorded_element_container,
-#root>div.permission_to_record_from_site {
+#root>div.permission_to_record_from_site,
+#root>div.error_box {
     max-width: 900px;
     margin: 0 auto;
     border-radius: 10px;

@@ -1,4 +1,7 @@
 {
+    "loader":{
+        "start" : "Veuillez patienter un instant, nous sommes en train d'initialiser l'enregistreur ainsi que vous demander les permissions d'utiliser vos périphériques disponibles"
+    },
     "time":{
         "minute" : "minute",
         "second": "seconde",

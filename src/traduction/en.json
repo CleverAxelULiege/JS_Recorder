@@ -1,4 +1,7 @@
 {
+    "loader":{
+        "start" : "Please wait a moment, we're in the process of initializing the recorder and requesting permission to use your available devices."
+    },
     "time":{
         "minute" : "minute",
         "second": "second",
