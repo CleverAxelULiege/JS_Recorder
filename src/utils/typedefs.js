@@ -61,6 +61,7 @@
  * @property {string} minutePlural
  * @property {string} secondPlural
  * @property {string} separator
+ * @property {string} placeholder
  */
 
 /**

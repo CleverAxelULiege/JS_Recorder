@@ -15,7 +15,7 @@ const TIME_SLICE_MEDIA_RECORDER = 500;
  * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
  * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques secondes plus l'enregistrement est long.
  */
-const STOP_RECORDING_TIMEOUT = 1000 * 10
+const STOP_RECORDING_TIMEOUT = 1000 * 62
 
 /**
  * Temps en millisecondes où la notif s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
@@ -492,19 +492,17 @@ export class Recorder {
             let minute = Math.floor(secondTimeOut / 60);
             let second = secondTimeOut % 60;
 
-            let timeOutMsg = this.tradRecorder.notificationTimeoutRecording + " : ";
-
-            //toutes ces conditions servent justent à formatter le message
-            //Ex : La vidéo ne peut pas dépasser : 1 minute
-            //Ex : La vidéo ne peut pas dépasser : 2 minutes et 1 seconde
-            //Ex : La vidéo ne peut pas dépasser : 30 secondes
-            if(minute > 0){
-                timeOutMsg += ` ${minute} ${minute > 1 ? this.tradTime.minutePlural : this.tradTime.minute}`;
-            }
+            let minuteName = minute > 1 ? this.tradTime.minutePlural : this.tradTime.minute;
+            let secondName = second > 1 ? this.tradTime.secondPlural : this.tradTime.second;
             
-            if(second > 0){
-                timeOutMsg += `${minute > 0 ? " " + this.tradTime.separator : ""} ${second} ${second > 1 ? this.tradTime.secondPlural : this.tradTime.second}`;
-            }
+            let msg = this.tradTime.placeholder
+            .replace(":MINUTE_NUMBER", minute > 0 ? minute.toString() : "")
+            .replace(":MINUTE_NAME", minute > 0 ? minuteName : "")
+            .replace(":SEPARATOR", second > 0 ? this.tradTime.separator : "")
+            .replace(":SECOND_NUMBER", second > 0 ? second.toString() : "")
+            .replace(":SECOND_NAME", second > 0 ? secondName : "");
+
+            let timeOutMsg = this.tradRecorder.notificationTimeoutRecording + " : " + msg;
 
             this.element.NOTIFICATION_TIMEOUT_BUTTON.querySelector("span").innerText = `${timeOutMsg}`;
 

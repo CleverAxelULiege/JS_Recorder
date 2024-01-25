@@ -3,11 +3,12 @@
         "start" : "Please wait a moment, we're in the process of initializing the recorder and requesting permission to use your available devices if we do not have them already."
     },
     "time":{
-        "minute" : "minute",
-        "second": "second",
-        "minutePlural" : "minutes",
-        "secondPlural" : "seconds",
-        "separator": "and"
+        "minute" : " minute",
+        "second": " second",
+        "minutePlural" : " minutes",
+        "secondPlural" : " seconds",
+        "separator": " and ",
+        "placeholder" : ":MINUTE_NUMBER:MINUTE_NAME:SEPARATOR:SECOND_NUMBER:SECOND_NAME"
     },
     "device" : {
         "audio" : "Audio device",

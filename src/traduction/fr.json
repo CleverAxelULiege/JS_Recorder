@@ -3,11 +3,12 @@
         "start" : "Veuillez patienter un instant, nous sommes en train d'initialiser l'enregistreur ainsi que vous demander les permissions d'utiliser vos périphériques disponibles si ne nous les avons pas encore"
     },
     "time":{
-        "minute" : "minute",
-        "second": "seconde",
-        "minutePlural" : "minutes",
-        "secondPlural" : "secondes",
-        "separator": "et"
+        "minute" : " minute",
+        "second": " seconde",
+        "minutePlural" : " minutes",
+        "secondPlural" : " secondes",
+        "separator": " et ",
+        "placeholder" : ":MINUTE_NUMBER:MINUTE_NAME:SEPARATOR:SECOND_NUMBER:SECOND_NAME"
     },
     "device" : {
         "audio" : "Périphérique audio",
