@@ -48,7 +48,7 @@ async function init() {
         
         let audioVisualizer = new AudioVisualizer();
 
-        recorder = new Recorder(page.traduction.recorder,page.traduction.time, audioVisualizer);
+        recorder = new Recorder(page.traduction.recorder,page.traduction.time, audioVisualizer, videoPlayer);
         recorder
         .setDeviceConstraint(mediaStreamConstraint, deviceDetails.audio.deviceId, deviceDetails.video.deviceId)
         .initEventListeners()

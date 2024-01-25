@@ -1,6 +1,7 @@
 import { SUPPORT_FULLSCREEN } from "../main.js";
 import { AudioVisualizer } from "./AudioVisualizer.js";
 import "./typedefs.js";
+import { VideoPlayer } from "./video_player/VideoPlayer.js";
 const VIDEO_MIME_TYPE = "video/webm";
 const AUDIO_MIME_TYPE = "audio/webm";
 
@@ -130,14 +131,22 @@ export class Recorder {
     audioVisualizer = null
 
     /**
+     * @private
+     * @type {VideoPlayer|null}
+     */
+    videoPlayer = null
+
+    /**
      * @param {ITraductionRecorder} tradRecorder
      * @param {ITraductionTime} tradTime
-     * @param {AudioVisualizer} audioVisualizer 
+     * @param {AudioVisualizer} audioVisualizer
+     * @param {VideoPlayer} videoPlayer
      */
-    constructor(tradRecorder, tradTime, audioVisualizer) {
+    constructor(tradRecorder, tradTime, audioVisualizer, videoPlayer) {
         this.tradRecorder = tradRecorder;
         this.tradTime = tradTime;
         this.audioVisualizer = audioVisualizer;
+        this.videoPlayer = videoPlayer;
 
         this.element = {
             VIDEO_DEVICE_DISABLED_H3: document.querySelector(".recorder .recorder_video_device_disabled"),
@@ -324,6 +333,10 @@ export class Recorder {
         if (this.mediaStream == null) {
             window.alert("No media stream available, the record will fail.");
             return;
+        }
+
+        if(!this.videoPlayer.isPaused()){
+            this.videoPlayer.pause(true);
         }
 
         this.element.RECORDER_CONTAINER_DIV.classList.remove("hidden");

@@ -120,6 +120,8 @@ export class VideoPlayer {
 
         this.video.addEventListener("loadedmetadata", () => {
             this.updateDisplayTimeStamp();
+            this.progressionSlider.setThumbPosition(0);
+            this.video.currentTime = 0;
         });
 
         this.JSsupportAspectRatio();
