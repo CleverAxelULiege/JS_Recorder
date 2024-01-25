@@ -37,7 +37,7 @@
  * @property {HTMLButtonElement} TOGGLE_FULLSCREEN_BUTTON
  * @property {HTMLSpanElement} TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN
  * @property {HTMLDivElement} RECORDED_ELEMENT_CONTAINER_DIV
- * @property {HTMLDivElement} NOTIFICATION_TIMEOUT_BUTTON
+ * @property {HTMLDivElement} NOTIFICATION_LIMIT_REACHED_BUTTON notif qui affiche si la taille ou le temps de l'enregistrement a été atteinte
  * @property {HTMLAnchorElement} DOWNLOAD_RECORDED_VIDEO_BUTTON
  */
 //#endregion
@@ -92,6 +92,7 @@
  * @property {string} leaveWhileRecording
  * @property {string} notificationStartRecording
  * @property {string} notificationTimeoutRecording
+ * @property {string} notificationLimitSizeReachedRecording
  * @property {{
         * disable:string,
         * unavailable:string,

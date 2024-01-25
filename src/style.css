@@ -302,7 +302,7 @@ main>.loader_container .loader {
     }
 }
 
-.recorder .video_container .popup_timeout {
+.recorder .video_container .notification_limit_reached {
     position: absolute;
     background-color: steelblue;
     color: white;
@@ -320,7 +320,7 @@ main>.loader_container .loader {
 
 }
 
-.recorder .video_container .popup_timeout.enter_in {
+.recorder .video_container .notification_limit_reached.enter_in {
     animation-name: popUpTimeOut;
     animation-iteration-count: 1;
     animation-duration: 150ms;
@@ -554,6 +554,11 @@ footer {
         width: 100%;
         font-size: 14px;
         padding: 0 5px;
+    }
+
+    .recorder .video_container .notification_limit_reached{
+        max-width: 100%;
+        width: 100%;
     }
 }
 

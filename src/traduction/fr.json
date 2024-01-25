@@ -20,6 +20,7 @@
         "overwritePreviousRecording": "Vous êtes sur le point d'enregistrer un nouvel enregistrement, ceci effacera l'enregistrement précédent, continuer ?",
         "notificationStartRecording" : "Commencer l'enregistrement",
         "notificationTimeoutRecording" : "Temps écoulé ! L'enregistrement ne peut pas durer (approximativement) plus de",
+        "notificationLimitSizeReachedRecording" : "Taille maximale de l'enregistrement atteinte. L'enregistrement ne peut pas faire (approximativement) plus de",
         "video":{
             "disable": "Périphérique vidéo désactivé.",
             "unavailable" : "Périphérique vidéo indisponible.<br>Vous pouvez toujours enregistrer un message audio.",

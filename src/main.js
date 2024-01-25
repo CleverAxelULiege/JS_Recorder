@@ -3,6 +3,7 @@ import { Device } from "./utils/Device.js";
 import { Page } from "./utils/Page.js";
 import { Recorder } from "./utils/Recorder.js";
 import "./utils/typedefs.js"
+import { VideoPlayer } from "./utils/video_player/VideoPlayer.js";
 
 /**@type {MediaStreamConstraints} */
 let mediaStreamConstraint;
@@ -12,6 +13,9 @@ let device = new Device();
 
 /**@type {Recorder|null} */
 let recorder = null;
+
+/**@type {VideoPlayer|null} */
+let videoPlayer = null;
 
 export const IS_MOBILE = device.checkIfMobile();
 export const IS_MOBILE_OR_TABLET = device.checkIfMobileOrTablet();
@@ -23,6 +27,7 @@ init();
 async function init() {
     (await page.fetchTraductionAndBuildPage()).retrieveDOMElements();
     try {
+        videoPlayer = new VideoPlayer(document.querySelector(".video_player"));
         // console.log("audio/webm:"+MediaRecorder.isTypeSupported('audio/webm;codecs=opus'));
         //askPermissions peut rater et nous envoyer dans le CATCH
         let deviceDetails = await device.askPermissions();

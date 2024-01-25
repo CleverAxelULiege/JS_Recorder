@@ -13,12 +13,20 @@ const TIME_SLICE_MEDIA_RECORDER = 500;
 /**
  * @type {number|null}
  * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
- * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques secondes plus l'enregistrement est long.
+ * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques petites secondes plus l'enregistrement est long.
  */
-const STOP_RECORDING_TIMEOUT = 1000 * 300
+const STOP_RECORDING_TIMEOUT = 1000 * 60;
+
+/**
+ * @type {number|null}
+ * Taille en byte, la limite de la taille de l'enregistrement. Si cette limite est atteinte l'enregistrement s'arrêtera
+ * mettre à null pour ne pas en tenir compte
+ */
+const MAX_BYTES_SIZE_RECORDING = 1000 * 1000 * 100;
 
 /**
  * Temps en millisecondes où la notif s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
+ * ou que la taille max a été atteinte
  */
 const NOTIFICATION_TIMEOUT = 1000 * 12;
 
@@ -75,6 +83,9 @@ export class Recorder {
      * @type {Blob[]}
      */
     recordedChunks = [];
+
+    /**@private */
+    currentByteSizeRecording = 0;
 
     /** @private*/
     timeElapsedInSeconds = 0;
@@ -154,7 +165,7 @@ export class Recorder {
             TOGGLE_FULLSCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
             PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".recorder .video_container"),
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
-            NOTIFICATION_TIMEOUT_BUTTON: document.querySelector(".recorder .popup_timeout"),
+            NOTIFICATION_LIMIT_REACHED_BUTTON: document.querySelector(".recorder .notification_limit_reached"),
             DOWNLOAD_RECORDED_VIDEO_BUTTON: document.querySelector(".download_recorded_video_button"),
         };
 
@@ -222,6 +233,7 @@ export class Recorder {
         }
     }
 
+    /**@private */
     initEventListeners() {
         if (this.mediaStreamConstraint == null) {
             console.error("No constraint passed");
@@ -244,7 +256,7 @@ export class Recorder {
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", () => this.stopRecording(false));
 
         this.element.TOGGLE_FULLSCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
-        this.element.NOTIFICATION_TIMEOUT_BUTTON.addEventListener("click", this.closeNotificationTimeout.bind(this));
+        this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.addEventListener("click", this.closeNotificationTimeout.bind(this));
 
         return this;
     }
@@ -465,6 +477,7 @@ export class Recorder {
         this.closeNotificationTimeout();
         this.isRecording = true;
         this.recordedChunks = [];
+        this.currentByteSizeRecording = 0;
 
         if (STOP_RECORDING_TIMEOUT != null) {
             this.startRecordingTimeOut();
@@ -486,8 +499,8 @@ export class Recorder {
     startRecordingTimeOut() {
         this.idRecordingTimeout = setTimeout(() => {
             this.stopRecording(false);
-            this.element.NOTIFICATION_TIMEOUT_BUTTON.classList.add("enter_in");
-            this.element.NOTIFICATION_TIMEOUT_BUTTON.setAttribute("aria-hidden", "false");
+            this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.classList.add("enter_in");
+            this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.setAttribute("aria-hidden", "false");
 
             let secondTimeOut = STOP_RECORDING_TIMEOUT / 1000;
             let minute = Math.floor(secondTimeOut / 60);
@@ -499,13 +512,13 @@ export class Recorder {
             let msg = this.tradTime.placeholder
             .replace(":MINUTE_NUMBER", minute > 0 ? minute.toString() : "")
             .replace(":MINUTE_NAME", minute > 0 ? minuteName : "")
-            .replace(":SEPARATOR", second > 0 ? this.tradTime.separator : "")
+            .replace(":SEPARATOR", second > 0 && minute > 0 ? this.tradTime.separator : "")
             .replace(":SECOND_NUMBER", second > 0 ? second.toString() : "")
             .replace(":SECOND_NAME", second > 0 ? secondName : "");
 
             let timeOutMsg = this.tradRecorder.notificationTimeoutRecording + " : " + msg;
 
-            this.element.NOTIFICATION_TIMEOUT_BUTTON.querySelector("span").innerText = `${timeOutMsg}`;
+            this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.querySelector("span").innerText = `${timeOutMsg}`;
 
             this.idNotificationTimeout = setTimeout(() => {
                 this.closeNotificationTimeout();
@@ -516,13 +529,37 @@ export class Recorder {
 
     /**
      * @private 
-     * Permet de fermer la notification qui dit que le temps d'enregistrement a été atteinte.
+     * Arrêtera automatiquement l'enregistrement si la taille de l'enregistrement dépasse MAX_BYTES_SIZE_RECORDING
+     */
+    maxSizeRecordingReached(){
+        this.stopRecording(false);
+        this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.classList.add("enter_in");
+        this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.setAttribute("aria-hidden", "false");
+
+        let convertedToMegabytes = MAX_BYTES_SIZE_RECORDING / 1000 / 1000;
+        let sizeInMegabytes = "";
+
+        try{
+            sizeInMegabytes = new Intl.NumberFormat(document.documentElement.lang, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(convertedToMegabytes);
+        }catch{
+            sizeInMegabytes = Math.round(convertedToMegabytes).toFixed(2).toString();
+        }
+
+        this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.querySelector("span").innerText = `${this.tradRecorder.notificationLimitSizeReachedRecording} : ${sizeInMegabytes} megabytes`;
+        this.idNotificationTimeout = setTimeout(() => {
+            this.closeNotificationTimeout();
+        }, NOTIFICATION_TIMEOUT);
+    }
+
+    /**
+     * @private 
+     * Permet de fermer la notification qui dit que le temps ou la taille de l'enregistrement a été atteinte.
      * Elle peut être activé par soit un setTimeout ou alors le clique d'un bouton
      */
     closeNotificationTimeout() {
-        this.element.NOTIFICATION_TIMEOUT_BUTTON.setAttribute("aria-hidden", "true");
+        this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.setAttribute("aria-hidden", "true");
         clearTimeout(this.idNotificationTimeout);
-        this.element.NOTIFICATION_TIMEOUT_BUTTON.classList.remove("enter_in");
+        this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.classList.remove("enter_in");
     }
 
     /**
@@ -535,7 +572,12 @@ export class Recorder {
         }
 
         this.mediaRecorder.ondataavailable = (blobEvent) => {
+            this.currentByteSizeRecording += blobEvent.data.size;
             this.recordedChunks.push(blobEvent.data);
+
+            if(MAX_BYTES_SIZE_RECORDING != null && this.currentByteSizeRecording > MAX_BYTES_SIZE_RECORDING){
+                this.maxSizeRecordingReached();
+            }
         }
 
         this.mediaRecorder.onstop = () => {

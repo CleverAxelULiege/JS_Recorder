@@ -1,0 +1,299 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.video_player {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+@supports (aspect-ratio: 16/9){
+    .video_player{
+        aspect-ratio: 16/9;
+    }
+}
+
+.video_player video {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+.video_player .controls {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 75px;
+    transition: all 150ms ease-in-out;
+    opacity: 0;
+    /*HEREEEEEEEEEEEEEEEEEEEEEEEEEEE*/
+    pointer-events: none;
+    background: rgb(0, 0, 0);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
+}
+
+.video_player .pulse_container{
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video_player .pulse_play.hidden,
+.video_player .pulse_pause.hidden{
+    display: none;
+}
+
+.video_player .pulse_play.animate,
+.video_player .pulse_pause.animate{
+    animation-name: play_pause_fade_in;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-duration: 500ms;
+    animation-timing-function: ease-in-out;
+}
+
+.video_player .pulse_play,
+.video_player .pulse_pause{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+}
+
+.video_player .controls.active{
+    opacity: 1;
+    pointer-events: all;
+}
+
+@media (hover: hover) {
+    .video_player:hover .controls {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .video_player .controls.hide{
+        opacity: 0;
+        pointer-events: none;
+        cursor: none;
+    }
+}
+
+.video_player .controls .buttons_container {
+    margin-top: auto;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 0 0 10px;
+    bottom: 10px;
+}
+
+.video_player .controls .buttons_container button {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-style: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    fill: white;
+    color: white;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.video_player .controls .buttons_container .timestamp {
+    color: white;
+    padding: 0 5px;
+    font-size: 16px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.video_player .controls .buttons_container button.play_button {
+    margin-right: 5px;
+}
+
+.video_player .controls .buttons_container button.volume_button.muted::after {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 4px;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+    background-color: #c72323;
+}
+
+.video_player .controls .buttons_container .full_screen_button {
+    margin-left: auto;
+    margin-right: 15px;
+}
+
+/****************BARRE DE PROGRESSION DANS LE TEMPS***************************/
+
+.video_player .controls .progress_bar .custom_range_slider {
+    position: relative;
+    width: 100%;
+    height: 10px;
+}
+
+.video_player .controls .progress_bar .rail {
+    height: 100%;
+    background-color: #c2c1c1;
+    cursor: pointer;
+}
+
+.video_player .controls .progress_bar .thumb {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 100;
+    width: 20px;
+    height: 20px;
+    background-color: #333333;
+    outline: 2px solid white;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.video_player .controls .progress_bar {
+    padding: 0 16px 0 16px;
+}
+
+.video_player .controls .progress_bar .done {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background-color: steelblue;
+    z-index: 50;
+}
+
+.video_player .controls .progress_bar .buffered {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background-color: rgb(112, 112, 112);
+}
+
+/********************************************/
+
+
+
+/*****************BARRE DE PROGRESSION DU VOLUME**************************/
+.video_player .controls .volume_container .custom_range_slider {
+    position: relative;
+    width: 100%;
+    height: 7px;
+}
+
+.video_player .controls .volume_container .rail {
+    height: 100%;
+    background-color: rgb(194, 193, 193);
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.video_player .controls .volume_container .thumb {
+    display: none;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 100;
+    width: 10px;
+    height: 10px;
+    background-color: #853434;
+    outline: 2px solid white;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.video_player .controls .volume_container .done {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #c72323;
+    border-radius: 5px;
+    z-index: 50;
+}
+
+.video_player .controls .volume_container {
+    align-self: stretch;
+    width: 0;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    transition: all 150ms ease-in-out;
+}
+
+.video_player .controls .progress_volume {
+    width: 100%;
+}
+
+
+@media (hover: hover) {
+    .video_player .controls .volume_button:hover+.volume_container,
+    .video_player .controls .volume_container:hover {
+        padding: 0 10px 0 10px;
+
+        width: 90px;
+    }
+
+    .video_player .controls .volume_button:hover+.volume_container .thumb,
+    .video_player .controls .volume_container:hover .thumb {
+        display: block;
+    }
+}
+
+/*******************************************/
+@keyframes play_pause_fade_in {
+    0%{
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    75%{
+        opacity: 0.4;
+    }
+    
+    100%{
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
