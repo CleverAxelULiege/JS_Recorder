@@ -14,12 +14,12 @@ const TIME_SLICE_MEDIA_RECORDER = 500;
  * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
  * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques secondes plus l'enregistrement est long.
  */
-const STOP_RECORDING_TIMEOUT = 1000 * 60
+const STOP_RECORDING_TIMEOUT = 1000 * 10
 
 /**
  * Temps en millisecondes où le pop up s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
  */
-const POPUP_TIMEOUT_UP_TIME = 12000;
+const POPUP_TIMEOUT_UP_TIME = 1000 * 12;
 
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
@@ -85,7 +85,7 @@ export class Recorder {
     idRecordingTimeout = null;
 
     /** @private*/
-    idPopupTimeout = null;
+    idNotificationTimeout = null;
 
     /** @private*/
     isRecording = false;
@@ -146,7 +146,7 @@ export class Recorder {
             PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".recorder .video_container"),
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
             LOADER_CONTAINER_DIV: document.querySelector(".recorder .loader_container"),
-            POPUP_TIMEOUT_BUTTON: document.querySelector(".recorder .popup_timeout"),
+            NOTIFICATION_TIMEOUT_BUTTON: document.querySelector(".recorder .popup_timeout"),
         };
     }
 
@@ -175,7 +175,7 @@ export class Recorder {
     }
 
     /**
-     * 
+     * Est uniquement utilisé par les SELECT pour changer de périphérique
      * @returns {(audioDeviceId:string|null, videoDeviceId:string|null) => void}
      */
     updateDevice() {
@@ -193,7 +193,7 @@ export class Recorder {
                 this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
             }
 
-            //TODO DETECT WHEN VIDEO DEVICE IS DISABLED
+            
             if (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled) {
                 this.toggleVideoDevice();
             }
@@ -228,7 +228,7 @@ export class Recorder {
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", () => this.stopRecording(false));
 
         this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
-        this.element.POPUP_TIMEOUT_BUTTON.addEventListener("click", this.closePopupTimeout.bind(this));
+        this.element.NOTIFICATION_TIMEOUT_BUTTON.addEventListener("click", this.closeNotificationTimeout.bind(this));
 
         return this;
     }
@@ -428,7 +428,7 @@ export class Recorder {
             }
         }
 
-        this.closePopupTimeout();
+        this.closeNotificationTimeout();
         this.isRecording = true;
         this.recordedChunks = [];
 
@@ -447,19 +447,19 @@ export class Recorder {
 
     /**
      * @private 
-     * Arrêtera automatiquement l'enregistrement après le TIMEOUT et affichera un POPUP
+     * Arrêtera automatiquement l'enregistrement après le TIMEOUT et affichera une notification en haut de la preview video
      */
     startRecordingTimeOut() {
         this.idRecordingTimeout = setTimeout(() => {
             this.stopRecording(false);
-            this.element.POPUP_TIMEOUT_BUTTON.classList.add("enter_in");
-            this.element.POPUP_TIMEOUT_BUTTON.ariaHidden = "false";
+            this.element.NOTIFICATION_TIMEOUT_BUTTON.classList.add("enter_in");
+            this.element.NOTIFICATION_TIMEOUT_BUTTON.ariaHidden = "false";
 
             let secondTimeOut = STOP_RECORDING_TIMEOUT / 1000;
             let minute = Math.floor(secondTimeOut / 60);
             let second = secondTimeOut % 60;
 
-            let timeOutMsg = this.tradRecorder.popUpTimeoutRecording + " : ";
+            let timeOutMsg = this.tradRecorder.notificationTimeoutRecording + " : ";
             if(minute > 0){
                 timeOutMsg += ` ${minute} ${this.tradTime.minute}${minute > 1 ? "s" : ""}`;
             }
@@ -468,20 +468,23 @@ export class Recorder {
                 timeOutMsg += `${minute > 0 ? " " + this.tradTime.separator : ""} ${second} ${this.tradTime.second}${second > 1 ? "s" : ""}`;
             }
 
-            this.element.POPUP_TIMEOUT_BUTTON.querySelector("span").innerText = `${timeOutMsg}`;
+            this.element.NOTIFICATION_TIMEOUT_BUTTON.querySelector("span").innerText = `${timeOutMsg}`;
 
-            this.idPopupTimeout = setTimeout(() => {
-                this.closePopupTimeout();
+            this.idNotificationTimeout = setTimeout(() => {
+                this.closeNotificationTimeout();
             }, POPUP_TIMEOUT_UP_TIME);
 
         }, STOP_RECORDING_TIMEOUT);
     }
 
-    /**@private */
-    closePopupTimeout() {
-        this.element.POPUP_TIMEOUT_BUTTON.ariaHidden = "true";
-        clearTimeout(this.idPopupTimeout);
-        this.element.POPUP_TIMEOUT_BUTTON.classList.remove("enter_in");
+    /**
+     * @private 
+     * Notification
+     */
+    closeNotificationTimeout() {
+        this.element.NOTIFICATION_TIMEOUT_BUTTON.ariaHidden = "true";
+        clearTimeout(this.idNotificationTimeout);
+        this.element.NOTIFICATION_TIMEOUT_BUTTON.classList.remove("enter_in");
     }
 
     /**

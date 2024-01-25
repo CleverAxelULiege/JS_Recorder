@@ -39,7 +39,7 @@
  * @property {HTMLDivElement} LOADER_CONTAINER_DIV
  * @property {HTMLDivElement} LOADER_CONTAINER_DIV
  * @property {HTMLDivElement} RECORDED_ELEMENT_CONTAINER_DIV
- * @property {HTMLDivElement} POPUP_TIMEOUT_BUTTON
+ * @property {HTMLDivElement} NOTIFICATION_TIMEOUT_BUTTON
  */
 //#endregion
 
@@ -88,7 +88,7 @@
  * @property {string} overwritePreviousRecording
  * @property {string} leaveWhileRecording
  * @property {string} popUpStartRecording
- * @property {string} popUpTimeoutRecording
+ * @property {string} notificationTimeoutRecording
  * @property {{
         * disable:string,
         * unavailable:string,

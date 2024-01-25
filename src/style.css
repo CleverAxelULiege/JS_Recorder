@@ -54,7 +54,6 @@ select {
 }
 
 @media (hover: hover) {
-
     select:hover,
     select:focus {
         outline: 1px solid var(--light_cyan);
@@ -480,7 +479,6 @@ main>.loader_container .loader {
 }
 
 @media (hover: hover) {
-
     .recorder_rec_button:hover,
     .recorder_toggle_video_button:hover,
     .recorder_stop_rec_button:hover,

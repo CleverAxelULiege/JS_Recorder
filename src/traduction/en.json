@@ -16,7 +16,7 @@
         "leaveWhileRecording" : "You're recording a video/audio track, do you really want to quit? This will stop the recording.",
         "overwritePreviousRecording": "You're about to record a new record, this will erase the previous record, continue?",
         "popUpStartRecording" : "Start the recording",
-        "popUpTimeoutRecording" : "Time up! Recording cannot last (approximately) longer than",
+        "notificationTimeoutRecording" : "Time up! Recording cannot last (approximately) longer than",
         "video":{
             "disable": "Video device disabled.",
             "unavailable" : "Video device unavailable.<br> You still have the possibility to record an audio message.",

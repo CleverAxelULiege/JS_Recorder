@@ -83,7 +83,7 @@ export class Page {
             default:
                 if (deviceStatus != DEVICE_STATUS.ok) {
                     console.log(deviceStatus);
-                    this.element.ERROR_BOX_DEVICE_DIV.innerHTML = `<p>${traduction.unknownError}</p>`;
+                    this.element.ERROR_BOX_DEVICE_DIV.innerHTML = `<p>${traduction.unknownError ?? "Failed to fetch the correct traduction"}</p>`;
                 }
                 break;
         }
