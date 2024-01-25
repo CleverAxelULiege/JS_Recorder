@@ -87,7 +87,7 @@
  * @property {string} main
  * @property {string} overwritePreviousRecording
  * @property {string} leaveWhileRecording
- * @property {string} popUpStartRecording
+ * @property {string} notificationStartRecording
  * @property {string} notificationTimeoutRecording
  * @property {{
         * disable:string,

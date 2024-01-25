@@ -193,7 +193,7 @@ export class Page {
                     <div class="recorder_buttons_container">
 
                         <button title="${this.traduction.recorder.video.button.start}" class="recorder_rec_button" id="start_recording_button">
-                            <div class="popup_start_recording"><span>${this.traduction.recorder.popUpStartRecording}</span></div>
+                            <div class="popup_start_recording"><span>${this.traduction.recorder.notificationStartRecording}</span></div>
                             <span class="title">REC</span>
                             <span class="circle"></span>
                             <span class="time_elapsed"></span>

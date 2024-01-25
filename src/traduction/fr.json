@@ -15,7 +15,7 @@
         "main" : "Vous pouvez enregistrer votre message audio et/ou vidéo depuis ici en appuyant sur le bouton ci-dessous.",
         "leaveWhileRecording" : "Vous êtes en train d'enregistrer une vidéo/piste audio, souhaitez-vous vraiment quitter ? Cela entrainera l'arrêt de l'enregistrement.",
         "overwritePreviousRecording": "Vous êtes sur le point d'enregistrer un nouvel enregistrement, ceci effacera l'enregistrement précédent, continuer ?",
-        "popUpStartRecording" : "Commencer l'enregistrement",
+        "notificationStartRecording" : "Commencer l'enregistrement",
         "notificationTimeoutRecording" : "Temps écoulé ! L'enregistrement ne peut pas durer (approximativement) plus de",
         "video":{
             "disable": "Périphérique vidéo désactivé.",

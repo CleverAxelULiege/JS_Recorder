@@ -292,9 +292,14 @@ main>.loader_container .loader {
 .recorder .video_container {
     position: relative;
     width: 100%;
-    aspect-ratio: 16/9;
     border-radius: 15px;
     overflow: hidden;
+}
+
+@supports (aspect-ratio: 16/9){
+    .recorder .video_container {
+        aspect-ratio: 16/9;
+    }
 }
 
 .recorder .video_container .popup_timeout {
@@ -511,12 +516,11 @@ main>.loader_container .loader {
 }
 
 h3.recorder_video_device_disabled {
+    width: 100%;
     text-align: center;
     position: absolute;
     font-size: 18px;
     top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
     color: white;
     user-select: none;
     user-select: none;

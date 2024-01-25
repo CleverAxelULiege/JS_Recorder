@@ -148,6 +148,8 @@ export class Recorder {
             LOADER_CONTAINER_DIV: document.querySelector(".recorder .loader_container"),
             NOTIFICATION_TIMEOUT_BUTTON: document.querySelector(".recorder .popup_timeout"),
         };
+
+        this.JSsupportAspectRatio();
     }
 
     /**
@@ -614,6 +616,20 @@ export class Recorder {
         let secondFormat = second < 10 ? `0${second}` : second;
 
         this.element.TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN.innerText = `${minuteFormat}:${secondFormat}`;
+    }
+
+    /**
+     * @private 
+     * Donnera un support aspect-ratio de 16/9 via javascript
+     */
+    JSsupportAspectRatio() {
+        if (!CSS.supports("aspect-ratio", "16/9")) {
+            console.info("Aspect-ratio support via JS");
+            this.element.PREVIEW_VIDEO_CONTAINER_DIV.style.height = (this.element.PREVIEW_VIDEO_CONTAINER_DIV.getBoundingClientRect().width / 16) * 9;
+            window.addEventListener("resize", () => {
+                this.element.PREVIEW_VIDEO_CONTAINER_DIV.style.height = (this.element.PREVIEW_VIDEO_CONTAINER_DIV.getBoundingClientRect().width / 16) * 9;
+            });
+        }
     }
 
 }
