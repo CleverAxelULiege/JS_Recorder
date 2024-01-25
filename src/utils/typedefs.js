@@ -60,6 +60,8 @@
  * @typedef ITraductionTime
  * @property {string} minute
  * @property {string} second
+ * @property {string} minutePlural
+ * @property {string} secondPlural
  * @property {string} separator
  */
 

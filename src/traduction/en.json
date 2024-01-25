@@ -5,6 +5,8 @@
     "time":{
         "minute" : "minute",
         "second": "second",
+        "minutePlural" : "minutes",
+        "secondPlural" : "seconds",
         "separator": "and"
     },
     "device" : {

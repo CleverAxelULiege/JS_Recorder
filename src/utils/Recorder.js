@@ -1,3 +1,4 @@
+import { SUPPORT_FULLSCREEN } from "../main.js";
 import { AudioVisualizer } from "./AudioVisualizer.js";
 import "./typedefs.js";
 const VIDEO_MIME_TYPE = "video/webm";
@@ -17,9 +18,9 @@ const TIME_SLICE_MEDIA_RECORDER = 500;
 const STOP_RECORDING_TIMEOUT = 1000 * 10
 
 /**
- * Temps en millisecondes où le pop up s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
+ * Temps en millisecondes où la notif s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
  */
-const POPUP_TIMEOUT_UP_TIME = 1000 * 12;
+const NOTIFICATION_TIMEOUT = 1000 * 12;
 
 /**@type {MediaTrackConstraintSet} */
 const VIDEO_CONSTRAINT = {
@@ -172,6 +173,10 @@ export class Recorder {
             this.element.TOGGLE_VIDEO_DEVICE_BUTTON.style.display = "none";
             //pas de périphérique vidéo donc je désactive le bouton
         }
+        
+        if(!SUPPORT_FULLSCREEN){
+            this.element.REQUEST_FULL_SCREEN_BUTTON.style.display = "none";
+        }
 
         return this;
     }
@@ -195,7 +200,8 @@ export class Recorder {
                 this.mediaStreamConstraint.audio.deviceId = audioDeviceId;
             }
 
-            
+            //si je détecte un changement de périph et que un périph vidéo existe et qu'il été désactivé je le réactive
+            //pour éviter des complications dont je ne me rappelle plus
             if (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled) {
                 this.toggleVideoDevice();
             }
@@ -238,9 +244,25 @@ export class Recorder {
     /**@private */
     toggleFullScreen() {
         if (this.isFullscreen) {
-            document.exitFullscreen();
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         } else {
-            this.element.PREVIEW_VIDEO_CONTAINER_DIV.requestFullscreen();
+            if (this.element.PREVIEW_VIDEO_CONTAINER_DIV.requestFullscreen) {
+                this.element.PREVIEW_VIDEO_CONTAINER_DIV.requestFullscreen();
+            } else if (this.element.PREVIEW_VIDEO_CONTAINER_DIV.mozRequestFullScreen) {
+                this.element.PREVIEW_VIDEO_CONTAINER_DIV.mozRequestFullScreen();
+            } else if (this.element.PREVIEW_VIDEO_CONTAINER_DIV.webkitRequestFullscreen) {
+                this.element.PREVIEW_VIDEO_CONTAINER_DIV.webkitRequestFullscreen();
+            } else if (this.element.PREVIEW_VIDEO_CONTAINER_DIV.msRequestFullscreen) {
+                this.element.PREVIEW_VIDEO_CONTAINER_DIV.msRequestFullscreen();
+            }
         }
 
         this.isFullscreen = !this.isFullscreen;
@@ -317,12 +339,14 @@ export class Recorder {
             this.audioVisualizer
                 .hide()
                 .stop();
+
             this.mediaStream = new MediaStream([this.mediaStreamTrackVideo, this.mediaStream.getAudioTracks()[0]]);
 
         } else {
             this.audioVisualizer
                 .show()
                 .start();
+
             this.mediaStream = new MediaStream([this.audioVisualizer.mediaStreamTrack, this.mediaStream.getAudioTracks()[0]]);
         }
     }
@@ -449,42 +473,48 @@ export class Recorder {
 
     /**
      * @private 
-     * Arrêtera automatiquement l'enregistrement après le TIMEOUT et affichera une notification en haut de la preview video
+     * Arrêtera automatiquement l'enregistrement après le STOP_RECORDING_TIMEOUT et affichera une notification en haut de la preview video
      */
     startRecordingTimeOut() {
         this.idRecordingTimeout = setTimeout(() => {
             this.stopRecording(false);
             this.element.NOTIFICATION_TIMEOUT_BUTTON.classList.add("enter_in");
-            this.element.NOTIFICATION_TIMEOUT_BUTTON.ariaHidden = "false";
+            this.element.NOTIFICATION_TIMEOUT_BUTTON.setAttribute("aria-hidden", "false");
 
             let secondTimeOut = STOP_RECORDING_TIMEOUT / 1000;
             let minute = Math.floor(secondTimeOut / 60);
             let second = secondTimeOut % 60;
 
             let timeOutMsg = this.tradRecorder.notificationTimeoutRecording + " : ";
+
+            //toutes ces conditions servent justent à formatter le message
+            //Ex : La vidéo ne peut pas dépasser : 1 minute
+            //Ex : La vidéo ne peut pas dépasser : 2 minutes et 1 seconde
+            //Ex : La vidéo ne peut pas dépasser : 30 secondes
             if(minute > 0){
-                timeOutMsg += ` ${minute} ${this.tradTime.minute}${minute > 1 ? "s" : ""}`;
+                timeOutMsg += ` ${minute} ${minute > 1 ? this.tradTime.minutePlural : this.tradTime.minute}`;
             }
             
             if(second > 0){
-                timeOutMsg += `${minute > 0 ? " " + this.tradTime.separator : ""} ${second} ${this.tradTime.second}${second > 1 ? "s" : ""}`;
+                timeOutMsg += `${minute > 0 ? " " + this.tradTime.separator : ""} ${second} ${second > 1 ? this.tradTime.secondPlural : this.tradTime.second}`;
             }
 
             this.element.NOTIFICATION_TIMEOUT_BUTTON.querySelector("span").innerText = `${timeOutMsg}`;
 
             this.idNotificationTimeout = setTimeout(() => {
                 this.closeNotificationTimeout();
-            }, POPUP_TIMEOUT_UP_TIME);
+            }, NOTIFICATION_TIMEOUT);
 
         }, STOP_RECORDING_TIMEOUT);
     }
 
     /**
      * @private 
-     * Notification
+     * Permet de fermer la notification qui dit que le temps d'enregistrement a été atteinte.
+     * Elle peut être activé par soit un setTimeout ou alors le clique d'un bouton
      */
     closeNotificationTimeout() {
-        this.element.NOTIFICATION_TIMEOUT_BUTTON.ariaHidden = "true";
+        this.element.NOTIFICATION_TIMEOUT_BUTTON.setAttribute("aria-hidden", "true");
         clearTimeout(this.idNotificationTimeout);
         this.element.NOTIFICATION_TIMEOUT_BUTTON.classList.remove("enter_in");
     }
@@ -523,7 +553,7 @@ export class Recorder {
         }
 
         this.isRecording = false;
-        this.mediaRecorder?.stop();
+        this.mediaRecorder.stop();
         clearInterval(this.idInterval);
         clearTimeout(this.idRecordingTimeout);
         await this.animateButtonsOut();
@@ -536,11 +566,12 @@ export class Recorder {
             this.isPaused = false;
         }
 
+        //si en fullscreen et que j'arrête l'enregistrement sors moi de ce mode
         if (this.isFullscreen) {
-            this.isFullscreen = false;
-            document.exitFullscreen();
+            this.toggleFullScreen();
         }
 
+        //affiche ce qui a été record si ce n'est pas déjà affiché
         this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
 
         if (closeRecorderOnStop) {
@@ -558,7 +589,7 @@ export class Recorder {
 
         this.element.START_RECORDING_BUTTON.addEventListener("transitionend", () => {
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.classList.remove("off_screen");
-            this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.ariaHidden = "false";
+            this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.setAttribute("aria-hidden", "false");
             this.element.START_RECORDING_BUTTON.style.transition = "none";
         }, { once: true });
     }
@@ -576,7 +607,7 @@ export class Recorder {
     animateButtonsOut() {
         return new Promise((resolve) => {
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.classList.add("off_screen");
-            this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.ariaHidden = "true";
+            this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.setAttribute("aria-hidden", "true");
             this.element.RECORDER_ACTION_BUTTONS_CONTAINER_DIV.addEventListener("transitionend", () => {
                 this.element.START_RECORDING_BUTTON.classList.remove("active");
                 this.element.START_RECORDING_BUTTON.style.transform = "";
