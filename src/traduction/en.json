@@ -34,7 +34,8 @@
         }
     },
     "recorded":{
-        "main" : "Your recorded message"
+        "main" : "Your recorded message",
+        "download" : "Download your recorded message"
     },
     "errorMessages" : {
         "device":{

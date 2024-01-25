@@ -15,7 +15,7 @@ const TIME_SLICE_MEDIA_RECORDER = 500;
  * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
  * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques secondes plus l'enregistrement est long.
  */
-const STOP_RECORDING_TIMEOUT = 1000 * 62
+const STOP_RECORDING_TIMEOUT = 1000 * 300
 
 /**
  * Temps en millisecondes où la notif s'affiche pour dire que le temps donné par STOP_RECORDING_TIMEOUT a été écoulé
@@ -155,6 +155,7 @@ export class Recorder {
             PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".recorder .video_container"),
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
             NOTIFICATION_TIMEOUT_BUTTON: document.querySelector(".recorder .popup_timeout"),
+            DOWNLOAD_RECORDED_VIDEO_BUTTON: document.querySelector(".download_recorded_video_button"),
         };
 
         this.JSsupportAspectRatio();
@@ -494,7 +495,7 @@ export class Recorder {
 
             let minuteName = minute > 1 ? this.tradTime.minutePlural : this.tradTime.minute;
             let secondName = second > 1 ? this.tradTime.secondPlural : this.tradTime.second;
-            
+
             let msg = this.tradTime.placeholder
             .replace(":MINUTE_NUMBER", minute > 0 ? minute.toString() : "")
             .replace(":MINUTE_NAME", minute > 0 ? minuteName : "")
@@ -542,9 +543,12 @@ export class Recorder {
             let recordedBlob = new Blob(this.recordedChunks, { type: this.mimeType + "; codecs=vp8, vorbis" });
 
             URL.revokeObjectURL(this.element.RECORDED_ELEMENT.src);
+            URL.revokeObjectURL(this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href);
+
             this.element.RECORDED_ELEMENT.src = URL.createObjectURL(recordedBlob);
-            // this.downloadButton.href = this.recordedVideo.src;
-            // this.downloadButton.download = "RecordedVideo.webm";
+
+            this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href = this.element.RECORDED_ELEMENT.src;
+            this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = `${Date.now()}_my_recorded_message.webm`;
         }
     }
 

@@ -38,6 +38,7 @@
  * @property {HTMLSpanElement} TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN
  * @property {HTMLDivElement} RECORDED_ELEMENT_CONTAINER_DIV
  * @property {HTMLDivElement} NOTIFICATION_TIMEOUT_BUTTON
+ * @property {HTMLAnchorElement} DOWNLOAD_RECORDED_VIDEO_BUTTON
  */
 //#endregion
 
@@ -76,6 +77,7 @@
 /**
  * @typedef ITraductionRecorded
  * @property {string} main
+ * @property {string} download
  */
 
 /**

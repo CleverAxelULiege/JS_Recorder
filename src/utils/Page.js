@@ -271,9 +271,10 @@ export class Page {
                 <div class="video_container">
                     <video controls id="recorded_video"></video>
                 </div>
+                <div class="download_recorded_video_container">
+                    <a role="button" class="download_recorded_video_button">${this.traduction.recorded.download}</a>
+                </div>
             </div>
-            
-        
         `;
     }
 }
