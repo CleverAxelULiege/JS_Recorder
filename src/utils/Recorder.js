@@ -136,17 +136,24 @@ export class Recorder {
             OPEN_RECORDER_BUTTON: document.querySelector("#display_recorder_button"),
             START_RECORDING_BUTTON: document.querySelector(".recorder #start_recording_button"),
             STOP_RECORDING_BUTTON: document.querySelector(".recorder #stop_recording_button"),
+
+            /**
+             * container qui a les bouton pause et stop du recorder
+             */
             RECORDER_ACTION_BUTTONS_CONTAINER_DIV: document.querySelector(".recorder .recorder_action_buttons_container"),
             PAUSE_RESUME_BUTTON: document.querySelector(".recorder #pause_resume_recording_button"),
             TOGGLE_VIDEO_DEVICE_BUTTON: document.querySelector(".recorder #toggle_video_device_button"),
-            TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder .recorder_action_fs_tv_buttons_container"), //container qui a le bouton pour activer/désactiver la caméra et la requête du plein écran
+
+            /**
+             * container qui a le bouton pour activer/désactiver la caméra et la requête du plein écran
+             */
+            TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder .recorder_action_fs_tv_buttons_container"), 
             PREVIEW_VIDEO: document.querySelector(".recorder #preview_video"),
             RECORDED_ELEMENT: document.querySelector(".recorded_element_container #recorded_video"),
             TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".recorder .time_elapsed"),
-            REQUEST_FULL_SCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
+            TOGGLE_FULLSCREEN_BUTTON: document.querySelector("#request_fullscreen_button"),
             PREVIEW_VIDEO_CONTAINER_DIV: document.querySelector(".recorder .video_container"),
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
-            LOADER_CONTAINER_DIV: document.querySelector(".recorder .loader_container"),
             NOTIFICATION_TIMEOUT_BUTTON: document.querySelector(".recorder .popup_timeout"),
         };
 
@@ -175,7 +182,7 @@ export class Recorder {
         }
         
         if(!SUPPORT_FULLSCREEN){
-            this.element.REQUEST_FULL_SCREEN_BUTTON.style.display = "none";
+            this.element.TOGGLE_FULLSCREEN_BUTTON.style.display = "none";
         }
 
         return this;
@@ -235,7 +242,7 @@ export class Recorder {
         this.element.PAUSE_RESUME_BUTTON.addEventListener("click", this.pauseOrResumeRecording.bind(this));
         this.element.STOP_RECORDING_BUTTON.addEventListener("click", () => this.stopRecording(false));
 
-        this.element.REQUEST_FULL_SCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
+        this.element.TOGGLE_FULLSCREEN_BUTTON.addEventListener("click", this.toggleFullScreen.bind(this));
         this.element.NOTIFICATION_TIMEOUT_BUTTON.addEventListener("click", this.closeNotificationTimeout.bind(this));
 
         return this;

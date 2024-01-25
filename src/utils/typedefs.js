@@ -28,16 +28,14 @@
  * @property {HTMLButtonElement} START_RECORDING_BUTTON
  * @property {HTMLButtonElement} STOP_RECORDING_BUTTON
  * @property {HTMLButtonElement} PAUSE_RESUME_BUTTON
- * @property {HTMLDivElement} RECORDER_ACTION_BUTTONS_CONTAINER_DIV
+ * @property {HTMLDivElement} RECORDER_ACTION_BUTTONS_CONTAINER_DIV container qui a les bouton pause et stop du recorder
  * @property {HTMLButtonElement} TOGGLE_VIDEO_DEVICE_BUTTON
- * @property {HTMLDivElement} TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV
+ * @property {HTMLDivElement} TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV container qui a le bouton pour activer/désactiver la caméra et la requête du plein écran
  * @property {HTMLVideoElement} PREVIEW_VIDEO
  * @property {HTMLVideoElement} RECORDED_ELEMENT
  * @property {HTMLVideoElement} PREVIEW_VIDEO_CONTAINER_DIV
- * @property {HTMLButtonElement} REQUEST_FULL_SCREEN_BUTTON
+ * @property {HTMLButtonElement} TOGGLE_FULLSCREEN_BUTTON
  * @property {HTMLSpanElement} TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN
- * @property {HTMLDivElement} LOADER_CONTAINER_DIV
- * @property {HTMLDivElement} LOADER_CONTAINER_DIV
  * @property {HTMLDivElement} RECORDED_ELEMENT_CONTAINER_DIV
  * @property {HTMLDivElement} NOTIFICATION_TIMEOUT_BUTTON
  */
