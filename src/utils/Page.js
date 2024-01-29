@@ -264,6 +264,25 @@ export class Page {
                         </div>
                     </div>
                 </div>
+
+                <div class="options_recorder">
+
+                    <div class="toggle_switch_container">
+                        <label for="download_on_stop_recording" class="toggle_switch">
+                            <input id="download_on_stop_recording" type="checkbox" />
+                            <span class="slider"></span>
+                        </label>
+                        <label for="download_on_stop_recording">${this.traduction.recorder.downloadRecordingAtEnd}</label>
+                    </div>
+
+                    <div class="toggle_switch_container">
+                        <label for="dont_record_oscilloscope" class="toggle_switch">
+                            <input id="dont_record_oscilloscope" type="checkbox" />
+                            <span class="slider"></span>
+                        </label>
+                        <label for="dont_record_oscilloscope">Ne pas enregistrer l'oscilloscope si possible (<i>cela réduira la taille de l'enregistrement si vous n'enregistrez qu'un message vocal</i>)</label>
+                    </div>
+                </div>
             </div>
 
             <div class="recorded_element_container hidden">

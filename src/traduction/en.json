@@ -21,6 +21,7 @@
         "notificationStartRecording" : "Start the recording",
         "notificationTimeoutRecording" : "Time up! Recording cannot last (approximately) longer than",
         "notificationLimitSizeReachedRecording" : "Maximum recording size reached. Recording cannot be (approximately) larger than",
+        "downloadRecordingAtEnd": "Automatically download the recording at the end",
         "video":{
             "disable": "Video device disabled.",
             "unavailable" : "Video device unavailable.<br> You still have the possibility to record an audio message.",

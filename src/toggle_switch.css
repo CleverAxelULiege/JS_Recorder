@@ -20,11 +20,10 @@
 }
 
 
-
 .toggle_switch .slider {
     position: absolute;
     inset: 0;
-    background-color: rgb(61, 61, 61);
+    background-color: rgb(112, 112, 112);
     transition: all 200ms linear;
     cursor: pointer;
 }

@@ -176,9 +176,12 @@ export class Recorder {
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
             NOTIFICATION_LIMIT_REACHED_BUTTON: document.querySelector(".recorder .notification_limit_reached"),
             DOWNLOAD_RECORDED_VIDEO_BUTTON: document.querySelector(".download_recorded_video_button"),
+            DOWNLOAD_RECORDING_AT_END_SWITCH: document.querySelector(".options_recorder #download_on_stop_recording"),
+            DONT_RECORD_OSCILLOSCOPE_SWITCH: document.querySelector(".options_recorder #dont_record_oscilloscope")
         };
 
         this.JSsupportAspectRatio();
+        this.getPreference();
     }
 
     /**
@@ -242,12 +245,13 @@ export class Recorder {
         }
     }
 
-    /**@private */
     initEventListeners() {
         if (this.mediaStreamConstraint == null) {
             console.error("No constraint passed");
             return null;
         }
+
+        this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.addEventListener("change", this.savePreference.bind(this));
 
         this.element.OPEN_RECORDER_BUTTON.addEventListener("click", this.openRecorder.bind(this));
         this.element.CLOSE_RECORDER_BUTTON.addEventListener("click", this.closeRecorder.bind(this));
@@ -268,6 +272,26 @@ export class Recorder {
         this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.addEventListener("click", this.closeNotificationTimeout.bind(this));
 
         return this;
+    }
+
+    /**@private */
+    savePreference(){
+        localStorage.setItem("recorder_preference", JSON.stringify({
+            downloadRecordAtEnd: this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked
+        }));
+    }
+
+    /**@private */
+    getPreference(){
+        let recorderPreference = localStorage.getItem("recorder_preference");
+
+        if(recorderPreference == null){
+            return;
+        }
+
+        recorderPreference = JSON.parse(recorderPreference);
+
+        this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked = recorderPreference.downloadRecordAtEnd ?? false;
     }
 
     /**@private */
@@ -498,7 +522,24 @@ export class Recorder {
 
         this.animateButtonsIn();
         this.startCounterTimeElapsed();
-        this.mediaRecorder = new MediaRecorder(this.mediaStream);
+
+        if(this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked){
+            let newMediaStream = null;
+
+            if(!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)){
+                newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+            }
+
+            // if(this.mediaStreamConstraint.video && this.mediaStreamTrackVideo.enabled){
+            //     newMediaStream = new MediaStream([this.mediaStreamTrackVideo, this.mediaStream.getAudioTracks()[0]]);
+            // }else {
+            //     newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+            // }
+            this.mediaRecorder = new MediaRecorder(newMediaStream);
+        } else {
+            this.mediaRecorder = new MediaRecorder(this.mediaStream);
+        }
+
         //video/webm; codecs="vp8, vorbis"
         this.initEventListenersOnMediaRecorder();
         this.mediaRecorder.start(TIME_SLICE_MEDIA_RECORDER);
@@ -604,7 +645,10 @@ export class Recorder {
 
             this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href = this.element.RECORDED_ELEMENT.src;
             this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = `${Date.now()}_my_recorded_message.webm`;
-            this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.click();
+
+            if(this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked){
+                this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.click();
+            }
 
             //affiche ce qui a été record si ce n'est pas déjà affiché
             this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
