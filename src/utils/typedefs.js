@@ -39,6 +39,9 @@
  * @property {HTMLDivElement} RECORDED_ELEMENT_CONTAINER_DIV
  * @property {HTMLDivElement} NOTIFICATION_LIMIT_REACHED_BUTTON notif qui affiche si la taille ou le temps de l'enregistrement a été atteinte
  * @property {HTMLAnchorElement} DOWNLOAD_RECORDED_VIDEO_BUTTON
+ * 
+ * @property {HTMLInputElement} DOWNLOAD_RECORDING_AT_END_SWITCH
+ * @property {HTMLInputElement} DONT_RECORD_OSCILLOSCOPE_SWITCH
  */
 //#endregion
 
@@ -93,6 +96,8 @@
  * @property {string} notificationStartRecording
  * @property {string} notificationTimeoutRecording
  * @property {string} notificationLimitSizeReachedRecording
+ * @property {string} downloadRecordingAtEnd
+ * @property {string} dontRecordOscilloscope
  * @property {{
         * disable:string,
         * unavailable:string,

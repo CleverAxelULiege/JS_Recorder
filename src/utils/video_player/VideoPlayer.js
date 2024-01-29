@@ -122,12 +122,20 @@ export class VideoPlayer {
             this.updateDisplayTimeStamp();
             this.progressionSlider.setThumbPosition(0);
             this.video.currentTime = 0;
+            this.playPauseButton.querySelector(".play_icon").classList.remove("hidden");
+            this.playPauseButton.querySelector(".pause_icon").classList.add("hidden");
+            this.playPauseButton.querySelector(".replay_icon").classList.add("hidden");
         });
 
         this.JSsupportAspectRatio();
 
 
         //obligé de faire une boucle car même avec l'event loaded il ne me retourne rien même pas le DOM Element pour afficher le temps écoulé à côté du volume
+        this.asyncUpdateDisplayTimeStamp();
+    }
+
+    /**@private */
+    async asyncUpdateDisplayTimeStamp(){
         while (this.timestamp.innerHTML == "") {
             this.updateDisplayTimeStamp();
         }
@@ -236,7 +244,7 @@ export class VideoPlayer {
     /**@private */
     endVideo() {
         //video done
-        if (this.progressionSlider.getProgression() == 100) {
+        if (this.progressionSlider.getProgression() >= 100) {
             this.isVideoOver = true;
 
             if(this.isTouchScreen()){

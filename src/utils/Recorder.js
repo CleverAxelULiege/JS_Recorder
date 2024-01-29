@@ -167,7 +167,7 @@ export class Recorder {
             /**
              * container qui a le bouton pour activer/désactiver la caméra et la requête du plein écran
              */
-            TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder .recorder_action_fs_tv_buttons_container"), 
+            TOGGLE_VIDEO_FULLSCREEN_BUTTON_CONTAINER_DIV: document.querySelector(".recorder .recorder_action_fs_tv_buttons_container"),
             PREVIEW_VIDEO: document.querySelector(".recorder #preview_video"),
             RECORDED_ELEMENT: document.querySelector(".recorded_element_container #recorded_video"),
             TIME_ELAPSED_SINCE_RECORD_STARTED_SPAN: document.querySelector(".recorder .time_elapsed"),
@@ -176,9 +176,12 @@ export class Recorder {
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
             NOTIFICATION_LIMIT_REACHED_BUTTON: document.querySelector(".recorder .notification_limit_reached"),
             DOWNLOAD_RECORDED_VIDEO_BUTTON: document.querySelector(".download_recorded_video_button"),
+            DOWNLOAD_RECORDING_AT_END_SWITCH: document.querySelector(".options_recorder #download_on_stop_recording"),
+            DONT_RECORD_OSCILLOSCOPE_SWITCH: document.querySelector(".options_recorder #dont_record_oscilloscope")
         };
 
         this.JSsupportAspectRatio();
+        this.getPreference();
     }
 
     /**
@@ -201,8 +204,8 @@ export class Recorder {
             this.element.TOGGLE_VIDEO_DEVICE_BUTTON.style.display = "none";
             //pas de périphérique vidéo donc je désactive le bouton
         }
-        
-        if(!SUPPORT_FULLSCREEN){
+
+        if (!SUPPORT_FULLSCREEN) {
             this.element.TOGGLE_FULLSCREEN_BUTTON.style.display = "none";
         }
 
@@ -229,7 +232,7 @@ export class Recorder {
             }
 
             //si je détecte un changement de périph et que un périph vidéo existe et qu'il été désactivé je le réactive
-            //pour éviter des complications dont je ne me rappelle plus
+            //pour éviter des complications d'affichage.
             if (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled) {
                 this.toggleVideoDevice();
             }
@@ -242,12 +245,14 @@ export class Recorder {
         }
     }
 
-    /**@private */
     initEventListeners() {
         if (this.mediaStreamConstraint == null) {
             console.error("No constraint passed");
             return null;
         }
+
+        this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.addEventListener("change", this.savePreference.bind(this));
+        this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.addEventListener("change", this.savePreference.bind(this));
 
         this.element.OPEN_RECORDER_BUTTON.addEventListener("click", this.openRecorder.bind(this));
         this.element.CLOSE_RECORDER_BUTTON.addEventListener("click", this.closeRecorder.bind(this));
@@ -268,6 +273,28 @@ export class Recorder {
         this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.addEventListener("click", this.closeNotificationTimeout.bind(this));
 
         return this;
+    }
+
+    /**@private */
+    savePreference(){
+        localStorage.setItem("recorder_preference", JSON.stringify({
+            downloadRecordAtEnd: this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked,
+            dontRecordOscilloscope: this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked
+        }));
+    }
+
+    /**@private */
+    getPreference(){
+        let recorderPreference = localStorage.getItem("recorder_preference");
+
+        if(recorderPreference == null){
+            return;
+        }
+
+        recorderPreference = JSON.parse(recorderPreference);
+
+        this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked = recorderPreference.downloadRecordAtEnd ?? false;
+        this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked = recorderPreference.dontRecordOscilloscope ?? false;
     }
 
     /**@private */
@@ -335,7 +362,7 @@ export class Recorder {
             return;
         }
 
-        if(!this.videoPlayer.isPaused()){
+        if (!this.videoPlayer.isPaused()) {
             this.videoPlayer.pause(true);
         }
 
@@ -498,7 +525,19 @@ export class Recorder {
 
         this.animateButtonsIn();
         this.startCounterTimeElapsed();
-        this.mediaRecorder = new MediaRecorder(this.mediaStream);
+
+        if(this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked){
+            let newMediaStream = null;
+
+            if(!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)){
+                newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+            }
+            
+            this.mediaRecorder = new MediaRecorder(newMediaStream);
+        } else {
+            this.mediaRecorder = new MediaRecorder(this.mediaStream);
+        }
+
         //video/webm; codecs="vp8, vorbis"
         this.initEventListenersOnMediaRecorder();
         this.mediaRecorder.start(TIME_SLICE_MEDIA_RECORDER);
@@ -523,11 +562,11 @@ export class Recorder {
             let secondName = second > 1 ? this.tradTime.secondPlural : this.tradTime.second;
 
             let msg = this.tradTime.placeholder
-            .replace(":MINUTE_NUMBER", minute > 0 ? minute.toString() : "")
-            .replace(":MINUTE_NAME", minute > 0 ? minuteName : "")
-            .replace(":SEPARATOR", second > 0 && minute > 0 ? this.tradTime.separator : "")
-            .replace(":SECOND_NUMBER", second > 0 ? second.toString() : "")
-            .replace(":SECOND_NAME", second > 0 ? secondName : "");
+                .replace(":MINUTE_NUMBER", minute > 0 ? minute.toString() : "")
+                .replace(":MINUTE_NAME", minute > 0 ? minuteName : "")
+                .replace(":SEPARATOR", second > 0 && minute > 0 ? this.tradTime.separator : "")
+                .replace(":SECOND_NUMBER", second > 0 ? second.toString() : "")
+                .replace(":SECOND_NAME", second > 0 ? secondName : "");
 
             let timeOutMsg = this.tradRecorder.notificationTimeoutRecording + " : " + msg;
 
@@ -544,7 +583,7 @@ export class Recorder {
      * @private 
      * Arrêtera automatiquement l'enregistrement si la taille de l'enregistrement dépasse MAX_BYTES_SIZE_RECORDING
      */
-    maxSizeRecordingReached(){
+    maxSizeRecordingReached() {
         this.stopRecording(false);
         this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.classList.add("enter_in");
         this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.setAttribute("aria-hidden", "false");
@@ -552,9 +591,9 @@ export class Recorder {
         let convertedToMegabytes = MAX_BYTES_SIZE_RECORDING / 1000 / 1000;
         let sizeInMegabytes = "";
 
-        try{
+        try {
             sizeInMegabytes = new Intl.NumberFormat(document.documentElement.lang, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(convertedToMegabytes);
-        }catch{
+        } catch {
             sizeInMegabytes = Math.round(convertedToMegabytes).toFixed(2).toString();
         }
 
@@ -588,7 +627,7 @@ export class Recorder {
             this.currentByteSizeRecording += blobEvent.data.size;
             this.recordedChunks.push(blobEvent.data);
 
-            if(MAX_BYTES_SIZE_RECORDING != null && this.currentByteSizeRecording > MAX_BYTES_SIZE_RECORDING){
+            if (MAX_BYTES_SIZE_RECORDING != null && this.currentByteSizeRecording > MAX_BYTES_SIZE_RECORDING) {
                 this.maxSizeRecordingReached();
             }
         }
@@ -604,6 +643,13 @@ export class Recorder {
 
             this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href = this.element.RECORDED_ELEMENT.src;
             this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = `${Date.now()}_my_recorded_message.webm`;
+
+            if(this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked){
+                this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.click();
+            }
+
+            //affiche ce qui a été record si ce n'est pas déjà affiché
+            this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
         }
     }
 
@@ -634,9 +680,6 @@ export class Recorder {
         if (this.isFullscreen) {
             this.toggleFullScreen();
         }
-
-        //affiche ce qui a été record si ce n'est pas déjà affiché
-        this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
 
         if (closeRecorderOnStop) {
             this.closeRecorder();
