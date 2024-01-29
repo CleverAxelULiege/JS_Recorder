@@ -97,6 +97,7 @@
  * @property {string} notificationTimeoutRecording
  * @property {string} notificationLimitSizeReachedRecording
  * @property {string} downloadRecordingAtEnd
+ * @property {string} dontRecordOscilloscope
  * @property {{
         * disable:string,
         * unavailable:string,

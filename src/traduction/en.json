@@ -22,6 +22,7 @@
         "notificationTimeoutRecording" : "Time up! Recording cannot last (approximately) longer than",
         "notificationLimitSizeReachedRecording" : "Maximum recording size reached. Recording cannot be (approximately) larger than",
         "downloadRecordingAtEnd": "Automatically download the recording at the end",
+        "dontRecordOscilloscope": "Do not record the oscilloscope if possible (<i>this will reduce the recording size if you only record a voice message</i>).",
         "video":{
             "disable": "Video device disabled.",
             "unavailable" : "Video device unavailable.<br> You still have the possibility to record an audio message.",

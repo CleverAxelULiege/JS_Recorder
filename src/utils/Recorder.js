@@ -252,6 +252,7 @@ export class Recorder {
         }
 
         this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.addEventListener("change", this.savePreference.bind(this));
+        this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.addEventListener("change", this.savePreference.bind(this));
 
         this.element.OPEN_RECORDER_BUTTON.addEventListener("click", this.openRecorder.bind(this));
         this.element.CLOSE_RECORDER_BUTTON.addEventListener("click", this.closeRecorder.bind(this));
@@ -277,7 +278,8 @@ export class Recorder {
     /**@private */
     savePreference(){
         localStorage.setItem("recorder_preference", JSON.stringify({
-            downloadRecordAtEnd: this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked
+            downloadRecordAtEnd: this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked,
+            dontRecordOscilloscope: this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked
         }));
     }
 
@@ -292,6 +294,7 @@ export class Recorder {
         recorderPreference = JSON.parse(recorderPreference);
 
         this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked = recorderPreference.downloadRecordAtEnd ?? false;
+        this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked = recorderPreference.dontRecordOscilloscope ?? false;
     }
 
     /**@private */
@@ -529,12 +532,7 @@ export class Recorder {
             if(!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)){
                 newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
             }
-
-            // if(this.mediaStreamConstraint.video && this.mediaStreamTrackVideo.enabled){
-            //     newMediaStream = new MediaStream([this.mediaStreamTrackVideo, this.mediaStream.getAudioTracks()[0]]);
-            // }else {
-            //     newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
-            // }
+            
             this.mediaRecorder = new MediaRecorder(newMediaStream);
         } else {
             this.mediaRecorder = new MediaRecorder(this.mediaStream);

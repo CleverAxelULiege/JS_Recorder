@@ -280,7 +280,7 @@ export class Page {
                             <input id="dont_record_oscilloscope" type="checkbox" />
                             <span class="slider"></span>
                         </label>
-                        <label for="dont_record_oscilloscope">Ne pas enregistrer l'oscilloscope si possible (<i>cela réduira la taille de l'enregistrement si vous n'enregistrez qu'un message vocal</i>)</label>
+                        <label for="dont_record_oscilloscope">${this.traduction.recorder.dontRecordOscilloscope}</label>
                     </div>
                 </div>
             </div>
